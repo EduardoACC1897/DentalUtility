@@ -2,17 +2,17 @@ using UnityEngine;
 
 public class CardCare : MonoBehaviour
 {
-    public bool cureDirty = true;
-    public bool cureCaries = false;
-    public bool cureFracture = false;
-    public int cleanValue = 25;  // Cantidad de suciedad que quita del diente
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    // Variables públicas
+    public bool cureDirty;    // Indica si cura la suciedad
+    public bool cureCaries;   // Indica si cura las caries
+    public bool cureFracture; // Indica si cura las fracturas
+    public int cleanValue;    // Cantidad de suciedad que elimina del diente
+
     void Start()
     {
 
     }
 
-    // Update is called once per frame
     void Update()
     {
 

@@ -2,11 +2,12 @@ using UnityEngine;
 
 public class CardFood : MonoBehaviour
 {
-    public bool grindAction = true;
-    public bool cutAction = true;
-    public bool tearAction = false;
+    // Variables públicas
+    public bool grindAction; // Indica si necesita la acción de moler
+    public bool cutAction;   // Indica si necesita la acción de cortar
+    public bool tearAction;  // Indica si necesita la acción de desgarrar
+    public int dirtValue;    // Valor de suciedad que aplica al diente
 
-    // Update is called once per frame
     void Update()
     {
 

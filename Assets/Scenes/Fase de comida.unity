@@ -152,7 +152,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grindAction: 1
   cutAction: 1
-  tearAction: 0
+  tearAction: 1
+  dirtValue: 25
 --- !u!61 &76338406
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -197,7 +198,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.25, y: 0.25}
   m_EdgeRadius: 0
 --- !u!212 &76338407
 SpriteRenderer:
@@ -263,7 +264,7 @@ Transform:
   m_GameObject: {fileID: 76338404}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.25, y: 3.31, z: 0}
+  m_LocalPosition: {x: -2, y: 3, z: 0}
   m_LocalScale: {x: 2, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -303,6 +304,7 @@ MonoBehaviour:
   grindAction: 1
   cutAction: 0
   tearAction: 0
+  dirtValue: 0
 --- !u!61 &166419646
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -333,7 +335,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -413,7 +415,7 @@ Transform:
   m_GameObject: {fileID: 166419644}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.86, y: -3.19, z: 0}
+  m_LocalPosition: {x: -1, y: -3, z: 0}
   m_LocalScale: {x: 2, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -587,9 +589,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbe5c405c952a5342bea2cb602c44d1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grindAction: 1
+  grindAction: 0
   cutAction: 0
-  tearAction: 0
+  tearAction: 1
+  dirtValue: 0
 --- !u!61 &732440709
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -620,7 +623,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -700,7 +703,7 @@ Transform:
   m_GameObject: {fileID: 732440707}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.12, y: -3.19, z: 0}
+  m_LocalPosition: {x: -3.5, y: -3, z: 0}
   m_LocalScale: {x: 2, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -737,9 +740,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbe5c405c952a5342bea2cb602c44d1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grindAction: 1
-  cutAction: 0
+  grindAction: 0
+  cutAction: 1
   tearAction: 0
+  dirtValue: 0
 --- !u!61 &1231151848
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -770,7 +774,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -850,7 +854,7 @@ Transform:
   m_GameObject: {fileID: 1231151846}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.56, y: -3.19, z: 0}
+  m_LocalPosition: {x: 4, y: -3, z: 0}
   m_LocalScale: {x: 2, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -889,7 +893,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grindAction: 1
   cutAction: 0
-  tearAction: 0
+  tearAction: 1
+  dirtValue: 0
 --- !u!61 &1607605353
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -920,7 +925,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -1000,7 +1005,7 @@ Transform:
   m_GameObject: {fileID: 1607605351}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.37, y: -3.19, z: 0}
+  m_LocalPosition: {x: 1.5, y: -3, z: 0}
   m_LocalScale: {x: 2, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1085,7 +1090,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.25, y: 0.25}
   m_EdgeRadius: 0
 --- !u!212 &1791216050
 SpriteRenderer:
@@ -1151,7 +1156,7 @@ Transform:
   m_GameObject: {fileID: 1791216047}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.85, y: 3.31, z: 0}
+  m_LocalPosition: {x: 2, y: 3, z: 0}
   m_LocalScale: {x: 2, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1162,9 +1167,9 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 440162766}
-  - {fileID: 1231151850}
   - {fileID: 732440711}
-  - {fileID: 1607605355}
   - {fileID: 166419648}
+  - {fileID: 1607605355}
+  - {fileID: 1231151850}
   - {fileID: 76338408}
   - {fileID: 1791216051}
