@@ -1,12 +1,13 @@
 using UnityEngine;
 
-public class CardTooth : MonoBehaviour
+public class ToothCard : MonoBehaviour
 {
     // Variables públicas
     public bool grindAction;  // Indica si realiza la acción de moler
     public bool cutAction;    // Indica si realiza la acción de cortar
     public bool tearAction;   // Indica si realiza la acción de desgarrar
     public int dirtValue;     // Valor de suciedad que tiene el diente
+    public int toothPH;     // Valor de ph que tiene el diente
 
     // Variables privadas
     private int state; // Estado del diente: Limpio = 0, Sucio = 1, Caries1 = 2, Caries2 = 3, Fractura = 4
@@ -69,7 +70,7 @@ public class CardTooth : MonoBehaviour
             if (hit.CompareTag("CardFood"))
             {
                 // Obtener el componente CardFood de la carta con la que colisionó
-                CardFood food = hit.GetComponent<CardFood>();
+                FoodCard food = hit.GetComponent<FoodCard>();
                 if (food != null)
                 {
                     // Interacción entre acciones
@@ -85,19 +86,31 @@ public class CardTooth : MonoBehaviour
 
                     // Aumentar la suciedad del diente según la comida
                     dirtValue += food.dirtValue;
+                    dirtValue = Mathf.Clamp(dirtValue, 0, 100);
+                    // Disminuir el ph del diente según la comida
+                    toothPH -= food.phImpact;
+                    toothPH = Mathf.Clamp(toothPH, 0, 100);
                 }
             }
-            // Colisión con carta de cuidado ("CardCare")
+            // Colisión con carta de cuidado
             else if (hit.CompareTag("CardCare"))
             {
-                // Obtener el componente CardCare de la carta con la que colisionó
-                CardCare care = hit.GetComponent<CardCare>();
-                if (care != null && care.cureDirty)
+                CareCard care = hit.GetComponent<CareCard>();
+                if (care != null)
                 {
-                    // Limpiar la suciedad del diente según el valor de la carta de cuidado
-                    dirtValue -= care.cleanValue;
-                    dirtValue = Mathf.Clamp(dirtValue, 0, 100); // Asegurar que la suciedad esté entre 0 y 100
-                    Destroy(hit.gameObject); // Destruir la carta de cuidado
+                    if (care.cureDirty)
+                    {
+                        dirtValue -= care.cleanValue;
+                        dirtValue = Mathf.Clamp(dirtValue, 0, 100);
+                    }
+
+                    if (care.curePH)
+                    {
+                        toothPH += care.phRecovery;
+                        toothPH = Mathf.Clamp(toothPH, 0, 100);
+                    }
+
+                    Destroy(hit.gameObject); // Destruir la carta una vez aplicada
                 }
             }
         }
