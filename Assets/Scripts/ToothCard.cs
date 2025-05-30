@@ -52,46 +52,46 @@ public class ToothCard : MonoBehaviour
     // Método al soltar el mouse
     void OnMouseUp()
     {
-        // Detener el arrastre
         isDragging = false;
-        cardInUse = false; // Marcar que ya no hay cartas en uso
-        boxCollider.enabled = true; // Reactivar el collider para detectar colisiones nuevamente
+        cardInUse = false;
+        boxCollider.enabled = true;
 
-        // Comprobar manualmente las colisiones del objeto
+        bool usedSuccessfully = false;
+        bool usedOnFood = false;
+        bool usedOnCare = false;
+
         Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0f);
 
-        // Recorrer todos los objetos que colisionan con el diente
         foreach (var hit in hits)
         {
-            // Evitar que procese si el collider es null, es el mismo objeto o tiene el mismo tag
             if (hit == null || hit.gameObject == gameObject || hit.CompareTag("CardTooth")) continue;
 
-            // Colisión con carta de comida ("CardFood")
+            // Colisión con carta de comida
             if (hit.CompareTag("CardFood"))
             {
-                // Obtener el componente CardFood de la carta con la que colisionó
                 FoodCard food = hit.GetComponent<FoodCard>();
                 if (food != null)
                 {
-                    // Interacción entre acciones
                     if (grindAction && food.grindAction) food.grindAction = false;
                     if (cutAction && food.cutAction) food.cutAction = false;
                     if (tearAction && food.tearAction) food.tearAction = false;
 
-                    // Si todas las acciones se cumplieron, destruir la comida
                     if (!food.grindAction && !food.cutAction && !food.tearAction)
                     {
-                        Destroy(hit.gameObject); // Destruir la carta de comida
+                        Destroy(hit.gameObject);
+                        usedOnFood = true;
                     }
 
-                    // Aumentar la suciedad del diente según la comida
+                    usedSuccessfully = true;
+
                     dirtValue += food.dirtValue;
                     dirtValue = Mathf.Clamp(dirtValue, 0, 100);
-                    // Disminuir el ph del diente según la comida
+
                     toothPH -= food.phImpact;
                     toothPH = Mathf.Clamp(toothPH, 0, 100);
                 }
             }
+
             // Colisión con carta de cuidado
             else if (hit.CompareTag("CardCare"))
             {
@@ -110,12 +110,33 @@ public class ToothCard : MonoBehaviour
                         toothPH = Mathf.Clamp(toothPH, 0, 100);
                     }
 
-                    Destroy(hit.gameObject); // Destruir la carta una vez aplicada
+                    Destroy(hit.gameObject);
+                    usedSuccessfully = true;
+                    usedOnCare = true;
                 }
             }
         }
 
-        // Volver la carta a la posición inicial
-        transform.position = startPosition;
+        if (usedSuccessfully)
+        {
+            // Registro del uso en el GameController
+            GameController gc = Object.FindFirstObjectByType<GameController>();
+            if (gc != null)
+            {
+                gc.RegisterToothCardUsed();
+
+                if (usedOnFood)
+                    gc.RegisterFoodCardUsed();
+
+                if (usedOnCare)
+                    gc.RegisterCareCardUsed();
+            }
+
+            Destroy(gameObject); // Destruir la carta de diente
+        }
+        else
+        {
+            transform.position = startPosition;
+        }
     }
 }

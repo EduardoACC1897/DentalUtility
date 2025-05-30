@@ -30,7 +30,7 @@ public class ToothDeck : MonoBehaviour
             // Instancia una copia del prefab en la posición actual
             GameObject instance = Instantiate(cardEntry.prefab, pos.position, Quaternion.identity);
 
-            // Marca la carta como no disponible para evitar reuso en la misma ronda
+            // Marca la carta como no disponible para evitar reuso
             cardEntry.isAvailable = false;
 
             posIndex++;

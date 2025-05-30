@@ -29,9 +29,6 @@ public class CareDeck : MonoBehaviour
             // Instanciar una copia del prefab en la posición correspondiente
             GameObject instance = Instantiate(cardEntry.prefab, pos.position, Quaternion.identity);
 
-            // Marcar la carta como no disponible para que no se vuelva a usar
-            cardEntry.isAvailable = false;
-
             posIndex++;
             // Si ya se llenaron todas las posiciones, se detiene
             if (posIndex >= positions.Length) break;
