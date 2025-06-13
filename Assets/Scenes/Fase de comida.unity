@@ -860,6 +860,27 @@ MonoBehaviour:
     isAvailable: 1
   - prefab: {fileID: 8552343529933187817, guid: 2555fb5046abc864183b1cdb4a141e63, type: 3}
     isAvailable: 1
+  toothCardDataList:
+  - {fileID: 11400000, guid: d0f4434667a3e0b4d82e846b5dcb1edb, type: 2}
+  - {fileID: 11400000, guid: bd14c6dc5afbf79489378ca57ccc3482, type: 2}
+  - {fileID: 11400000, guid: f520e3fce2e6de445b0e624e3de323d9, type: 2}
+  - {fileID: 11400000, guid: 881dca0428956244b82d7e891fa62bef, type: 2}
+  - {fileID: 11400000, guid: c70125e97b9759740850c925c6d29cb8, type: 2}
+  - {fileID: 11400000, guid: 9e4987ae7e7118747a010559deb468d3, type: 2}
+  - {fileID: 11400000, guid: 2c91b670fc88be54a81bd9daba668b36, type: 2}
+  - {fileID: 11400000, guid: 88a943c87312a9f418355dc5bcbc6eba, type: 2}
+  - {fileID: 11400000, guid: 2e53907f24aeb304cbbe124a767a9f6f, type: 2}
+  - {fileID: 11400000, guid: 6f07ddafedcc30c4896ea9933793750d, type: 2}
+  - {fileID: 11400000, guid: c8a928cc31a731e4cbe159e77dcf5064, type: 2}
+  - {fileID: 11400000, guid: 3a97a3f2cea891d4db253a1672274162, type: 2}
+  - {fileID: 11400000, guid: 542e3530ccc9dab47ac3f5e2749011f7, type: 2}
+  - {fileID: 11400000, guid: b28cedcb2dc2103429bbe286ef135462, type: 2}
+  - {fileID: 11400000, guid: 4b8421da552f53a4ab8b42ad3e4ec8dc, type: 2}
+  - {fileID: 11400000, guid: 7283ba5184c2f18488c8d307bb65d0e8, type: 2}
+  - {fileID: 11400000, guid: 76ecee0e83de8374ca9e957a180d266c, type: 2}
+  - {fileID: 11400000, guid: b8d2ea2b7131b7845865a44356bd0f46, type: 2}
+  - {fileID: 11400000, guid: eeb26bba7e1bcce458ebeb036f5946bf, type: 2}
+  - {fileID: 11400000, guid: e7494b149ee861e4fb7b1b3276109e96, type: 2}
   positions:
   - {fileID: 1110221255}
   - {fileID: 1438072825}

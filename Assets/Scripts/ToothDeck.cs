@@ -13,6 +13,7 @@ public class ToothCardEntry
 public class ToothDeck : MonoBehaviour
 {
     public List<ToothCardEntry> toothCards; // Lista de cartas de dientes (prefabs + disponibilidad)
+    public List<ToothCardData> toothCardDataList; // Lista de los datos de las cartas de dientes
     public Transform[] positions;           // Posiciones sobre la mesa donde aparecerán las cartas
 
     // Función pública que instancia hasta 5 cartas de diente en las posiciones definidas
@@ -33,10 +34,31 @@ public class ToothDeck : MonoBehaviour
             // Marca la carta como no disponible para evitar reuso
             cardEntry.isAvailable = false;
 
+            // Cargar datos si hay coincidencia de ID
+            ToothCard card = instance.GetComponent<ToothCard>();
+            if (card != null)
+            {
+                ToothCardData data = GetDataByID(card.cardID);
+                if (data != null)
+                {
+                    card.LoadData(data);
+                }
+            }
+
+            GameController gc = Object.FindFirstObjectByType<GameController>();
+            if (gc != null)
+                gc.RegisterToothCardCreated();
+
             posIndex++;
             // Si ya se llenaron todas las posiciones, salir del bucle
             if (posIndex >= positions.Length) break;
         }
+    }
+
+    // Función privada que encuentra si existe un objeto de datos (ToothCardData) con un ID específico en la lista
+    private ToothCardData GetDataByID(string id)
+    {
+        return toothCardDataList.Find(d => d.cardID == id);
     }
 
     // Función privada que devuelve una carta aleatoria que esté disponible

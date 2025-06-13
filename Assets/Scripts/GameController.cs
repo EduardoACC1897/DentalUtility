@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    public int phase = 1; // Fase actual: 1 = Comida, 2 = Cuidado 
+    public int phase = 1; // Fase actual: 1 = Comida, 2 = Cuidado
 
     public ToothDeck toothDeck; // Mazo de dientes
     public FoodDeck foodDeck;   // Mazo de comida
@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour
 
     // Contadores
     private int usedToothCount = 0;
+    private int totalToothCardsCreated = 0;
     private int usedFoodCount = 0;
     private int usedCareCount = 0;
 
@@ -44,13 +45,21 @@ public class GameController : MonoBehaviour
         }
     }
 
+    // Registro de cada vez que se instancia una carta
+    public void RegisterToothCardCreated()
+    {
+        totalToothCardsCreated++;
+    }
+
     // Registro de cada vez que se usa una carta de diente
     public void RegisterToothCardUsed()
     {
         usedToothCount++;
-        if (usedToothCount >= 5)
+
+        if (usedToothCount >= totalToothCardsCreated && totalToothCardsCreated > 0)
         {
             usedToothCount = 0;
+            totalToothCardsCreated = 0;
             toothDeck.SpawnToothCards();
         }
     }

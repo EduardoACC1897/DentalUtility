@@ -3,18 +3,35 @@ using UnityEngine;
 public class ToothCard : MonoBehaviour
 {
     // Variables públicas
+    public string cardID; // ID de la carta
     public bool grindAction;  // Indica si realiza la acción de moler
     public bool cutAction;    // Indica si realiza la acción de cortar
     public bool tearAction;   // Indica si realiza la acción de desgarrar
     public int dirtValue;     // Valor de suciedad que tiene el diente
     public int toothPH;     // Valor de ph que tiene el diente
+    private int state; // Estado del diente: Limpio = 0, Sucio = 1, Caries1 = 2, Caries2 = 3, Fractura = 4
 
     // Variables privadas
-    private int state; // Estado del diente: Limpio = 0, Sucio = 1, Caries1 = 2, Caries2 = 3, Fractura = 4
     private Vector3 startPosition; // Posición inicial del diente
     private bool isDragging = false; // Controlar si el diente está siendo arrastrado
     private static bool cardInUse = false; // Controlar que solo una carta se use a la vez
     private BoxCollider2D boxCollider; // Collider del objeto
+
+    // Método de carga de datos
+    public void LoadData(ToothCardData data)
+    {
+        dirtValue = data.dirtValue;
+        toothPH = data.toothPH;
+        state = data.state;
+    }
+
+    // Método de guardado de datos
+    public void SaveData(ToothCardData data)
+    {
+        data.dirtValue = dirtValue;
+        data.toothPH = toothPH;
+        data.state = state;
+    }
 
     // Método de inicio
     void Start()
@@ -119,20 +136,27 @@ public class ToothCard : MonoBehaviour
 
         if (usedSuccessfully)
         {
-            // Registro del uso en el GameController
+            // Buscar el objeto de datos correspondiente
+            ToothDeck deck = Object.FindFirstObjectByType<ToothDeck>();
+            if (deck != null)
+            {
+                ToothCardData data = deck.toothCardDataList.Find(d => d.cardID == this.cardID);
+                if (data != null)
+                {
+                    SaveData(data); // Guardar los datos antes de destruir
+                }
+            }
+
+            // Registro en el GameController
             GameController gc = Object.FindFirstObjectByType<GameController>();
             if (gc != null)
             {
                 gc.RegisterToothCardUsed();
-
-                if (usedOnFood)
-                    gc.RegisterFoodCardUsed();
-
-                if (usedOnCare)
-                    gc.RegisterCareCardUsed();
+                if (usedOnFood) gc.RegisterFoodCardUsed();
+                if (usedOnCare) gc.RegisterCareCardUsed();
             }
 
-            Destroy(gameObject); // Destruir la carta de diente
+            Destroy(gameObject); // Eliminar carta de la escena
         }
         else
         {
