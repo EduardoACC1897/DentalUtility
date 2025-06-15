@@ -1,0 +1,40 @@
+# Configuración general
+* text=auto
+
+# Archivos de código y texto
+*.cs       text diff=csharp
+*.shader   text
+*.cginc    text
+*.txt      text
+*.json     text
+*.xml      text
+*.yaml     text
+*.yml      text
+*.asmdef   text
+*.meta     text
+
+# Archivos binarios Unity (no diffs)
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.psd      binary
+*.mp3      binary
+*.ogg      binary
+*.wav      binary
+*.fbx      binary
+*.prefab   binary
+*.unity    binary
+*.mat      binary
+*.asset    binary
+*.ttf      binary
+*.otf      binary
+*.anim     binary
+*.controller binary
+
+# Ignorar cambios en espacios en blanco al final
+*.cs       text eol=lf
+
+# Evitar que git intente normalizar line endings en binarios
+*.dll      binary
+*.exe      binary
