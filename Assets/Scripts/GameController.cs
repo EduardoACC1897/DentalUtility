@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
     // Contadores
     private int usedToothCount = 0;
     private int totalToothCardsCreated = 0;
+    private int totalToothCards = 0;
     private int usedFoodCount = 0;
     private int usedCareCount = 0;
 
@@ -28,20 +29,45 @@ public class GameController : MonoBehaviour
         if (phase == 1)
         {
             foodDeck.transform.position = foodDeckPosition;
-
+            UpdateAvailableToothCardsCount();
             toothDeck.SpawnToothCards();
             foodDeck.SpawnFoodCards();
         }
         else if (phase == 2)
         {
             careDeck.transform.position = careDeckPosition;
-
+            UpdateAvailableToothCardsCount();
             toothDeck.SpawnToothCards();
             careDeck.SpawnCareCards();
         }
         else
         {
             Debug.LogWarning("Fase no válida. Usa 1 para comida o 2 para cuidado.");
+        }
+    }
+
+    // Función para actualizar el contador de cartas de diente disponibles
+    public void UpdateAvailableToothCardsCount()
+    {
+        if (toothDeck != null)
+        {
+            totalToothCards = toothDeck.GetAvailableToothCardsCount();
+        }
+    }
+
+    // Función para verificar si no quedan cartas de diente disponibles y, en ese caso,
+    // reiniciar la disponibilidad del mazo y generar nuevas cartas automáticamente.
+    public void CheckAndSpawnToothCardsIfNone()
+    {
+        totalToothCards--;
+        if (totalToothCards == 0)
+        {
+            if (toothDeck != null)
+            {
+                toothDeck.ResetCardAvailability();
+                toothDeck.SpawnToothCards();
+                UpdateAvailableToothCardsCount();
+            }
         }
     }
 

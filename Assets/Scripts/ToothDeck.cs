@@ -16,7 +16,13 @@ public class ToothDeck : MonoBehaviour
     public List<ToothCardData> toothCardDataList; // Lista de los datos de las cartas de dientes
     public Transform[] positions;           // Posiciones sobre la mesa donde aparecerán las cartas
 
-    // Función pública que instancia hasta 5 cartas de diente en las posiciones definidas
+    // Función para obtener la cantidad de cartas disponibles en la lista
+    public int GetAvailableToothCardsCount()
+    {
+        return toothCards.FindAll(card => card.isAvailable).Count;
+    }
+
+    // Función que instancia hasta 5 cartas de diente en las posiciones definidas
     public void SpawnToothCards()
     {
         int posIndex = 0; // Índice para recorrer las posiciones
@@ -61,7 +67,7 @@ public class ToothDeck : MonoBehaviour
         return toothCardDataList.Find(d => d.cardID == id);
     }
 
-    // Función privada que devuelve una carta aleatoria que esté disponible
+    // Función que devuelve una carta aleatoria que esté disponible
     private ToothCardEntry GetRandomAvailableCard()
     {
         // Filtra las cartas disponibles (isAvailable == true)

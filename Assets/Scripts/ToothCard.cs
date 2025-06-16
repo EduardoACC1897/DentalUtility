@@ -9,7 +9,8 @@ public class ToothCard : MonoBehaviour
     public bool tearAction;   // Indica si realiza la acción de desgarrar
     public int dirtValue;     // Valor de suciedad que tiene el diente
     public int toothPH;     // Valor de ph que tiene el diente
-    private int state; // Estado del diente: Limpio = 0, Sucio = 1, Caries1 = 2, Caries2 = 3, Fractura = 4
+    public int state; // Estado del diente: Limpio = 0, Sucio = 1, Caries1 = 2, Caries2 = 3, Fractura = 4
+    public int durability; // Durabilidad del diente: Sano = 0, Comprometido = 1, Crítico = 2
 
     // Variables privadas
     private Vector3 startPosition; // Posición inicial del diente
@@ -23,6 +24,7 @@ public class ToothCard : MonoBehaviour
         dirtValue = data.dirtValue;
         toothPH = data.toothPH;
         state = data.state;
+        durability = data.durability;
     }
 
     // Método de guardado de datos
@@ -31,6 +33,7 @@ public class ToothCard : MonoBehaviour
         data.dirtValue = dirtValue;
         data.toothPH = toothPH;
         data.state = state;
+        data.durability = durability;
     }
 
     // Método de inicio
@@ -154,6 +157,7 @@ public class ToothCard : MonoBehaviour
                 gc.RegisterToothCardUsed();
                 if (usedOnFood) gc.RegisterFoodCardUsed();
                 if (usedOnCare) gc.RegisterCareCardUsed();
+                gc.CheckAndSpawnToothCardsIfNone();
             }
 
             Destroy(gameObject); // Eliminar carta de la escena

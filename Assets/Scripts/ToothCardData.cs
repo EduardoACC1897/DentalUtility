@@ -7,4 +7,5 @@ public class ToothCardData : ScriptableObject
     public int dirtValue;
     public int toothPH;
     public int state;
+    public int durability;
 }
