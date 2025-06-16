@@ -158,7 +158,7 @@ public class ToothDeck : MonoBehaviour
         }
     }
 
-    // Función pública para llamar desde un botón UI y reemplazar todas las cartas
+    // Función para llamar desde un botón UI y reemplazar todas las cartas
     public void ReplaceCardsFromButton()
     {
         ReplaceAllToothCards();
