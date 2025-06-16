@@ -51,6 +51,12 @@ public class GameController : MonoBehaviour
         totalToothCardsCreated++;
     }
 
+    // Función para reducir el contador de cartas de diente creadas
+    public void UnregisterToothCardCreated()
+    {
+        totalToothCardsCreated = Mathf.Max(0, totalToothCardsCreated - 1);
+    }
+
     // Registro de cada vez que se usa una carta de diente
     public void RegisterToothCardUsed()
     {
