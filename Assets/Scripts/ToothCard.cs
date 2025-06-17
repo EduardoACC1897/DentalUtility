@@ -1,16 +1,19 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ToothCard : MonoBehaviour
 {
     // Variables públicas
     public string cardID; // ID de la carta
-    public bool grindAction;  // Indica si realiza la acción de moler
-    public bool cutAction;    // Indica si realiza la acción de cortar
-    public bool tearAction;   // Indica si realiza la acción de desgarrar
-    public int dirtValue;     // Valor de suciedad que tiene el diente
-    public int toothPH;     // Valor de ph que tiene el diente
-    public int state; // Estado del diente: Limpio = 0, Sucio = 1, Caries1 = 2, Caries2 = 3, Fractura = 4
+    public bool grindAction; // Indica si realiza la acción de moler
+    public bool cutAction; // Indica si realiza la acción de cortar
+    public bool tearAction; // Indica si realiza la acción de desgarrar
+    public bool hasFracture; // Indica si el diente tiene una fractura
+    public int dirtValue; // Valor de suciedad que tiene el diente
+    public int toothPH; // Valor de ph que tiene el diente
+    public int state; // Estado del diente: Limpio = 0, Sucio = 1, Caries1 = 2, Caries2 = 3
     public int durability; // Durabilidad del diente: Sano = 0, Comprometido = 1, Crítico = 2
+    public List<Sprite> stateSprites; // Lista de sprites disponibles para representar visualmente el estado del diente
 
     // Variables privadas
     private Vector3 startPosition; // Posición inicial del diente
@@ -25,6 +28,9 @@ public class ToothCard : MonoBehaviour
         toothPH = data.toothPH;
         state = data.state;
         durability = data.durability;
+        hasFracture = data.hasFracture;
+
+        UpdateToothSprite(); // Actualizar el sprite según el estado
     }
 
     // Método de guardado de datos
@@ -34,6 +40,7 @@ public class ToothCard : MonoBehaviour
         data.toothPH = toothPH;
         data.state = state;
         data.durability = durability;
+        data.hasFracture = hasFracture;
     }
 
     // Método de inicio
@@ -166,5 +173,24 @@ public class ToothCard : MonoBehaviour
         {
             transform.position = startPosition;
         }
+    }
+
+    // Función que actualiza el sprite visual del diente en base al estado actual
+    private void UpdateToothSprite()
+    {
+        if (stateSprites != null && state >= 0 && state < stateSprites.Count)
+        {
+            SpriteRenderer sr = GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                sr.sprite = stateSprites[state];
+            }
+        }
+    }
+
+    // Función que permite activar o desactivar la fractura del diente
+    public void SetFractureState(bool value)
+    {
+        hasFracture = value;
     }
 }

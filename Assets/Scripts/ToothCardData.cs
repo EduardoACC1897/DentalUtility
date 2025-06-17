@@ -3,9 +3,10 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "DentalUtility/Tooth Card Data")]
 public class ToothCardData : ScriptableObject
 {
-    public string cardID;
-    public int dirtValue;
-    public int toothPH;
-    public int state;
-    public int durability;
+    public string cardID;      // ID único para enlazar datos con la carta
+    public int dirtValue;      // Nivel de suciedad del diente
+    public int toothPH;        // Nivel de pH del diente (0-100)
+    public int state;          // Estado del diente: Limpio = 0, Sucio = 1, Caries1 = 2, Caries2 = 3
+    public int durability;     // Durabilidad del diente: Sano = 0, Comprometido = 1, Crítico = 2
+    public bool hasFracture;   // Fractura o no del diente
 }
