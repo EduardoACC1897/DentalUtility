@@ -149,11 +149,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cureDirty: 0
-  cureCaries: 0
+  curePH: 1
+  cureCaries: 1
   cureFracture: 0
-  curePH: 0
   cleanValue: 0
-  phRecovery: 0
+  phRecovery: 20
 --- !u!1 &8596848553068808070
 GameObject:
   m_ObjectHideFlags: 0

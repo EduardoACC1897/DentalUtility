@@ -61,7 +61,7 @@ public class ToothDeck : MonoBehaviour
         }
     }
 
-    // Función privada que encuentra si existe un objeto de datos (ToothCardData) con un ID específico en la lista
+    // Función que encuentra si existe un objeto de datos (ToothCardData) con un ID específico en la lista
     private ToothCardData GetDataByID(string id)
     {
         return toothCardDataList.Find(d => d.cardID == id);

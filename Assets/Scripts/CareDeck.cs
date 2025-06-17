@@ -15,7 +15,7 @@ public class CareDeck : MonoBehaviour
     public List<CareCardEntry> careCards; // Lista de cartas disponibles (pool)
     public Transform[] positions;         // Posiciones sobre la mesa donde se colocarán las cartas
 
-    // Método público que coloca hasta 5 cartas en la mesa desde las disponibles.
+    // Función que coloca hasta 5 cartas en la mesa desde las disponibles.
     public void SpawnCareCards()
     {
         int posIndex = 0; // Índice para rastrear en qué posición colocar la siguiente carta
@@ -35,7 +35,7 @@ public class CareDeck : MonoBehaviour
         }
     }
 
-    // Método privado que busca aleatoriamente una carta disponible del mazo
+    // Función que busca aleatoriamente una carta disponible del mazo
     private CareCardEntry GetRandomAvailableCard()
     {
         // Filtra la lista para obtener solo las cartas disponibles

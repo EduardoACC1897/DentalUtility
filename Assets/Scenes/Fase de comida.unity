@@ -607,25 +607,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   careCards:
-  - prefab: {fileID: 3191739156982263418, guid: 08b6a804cb920de41ab10852a8a973ff, type: 3}
-    isAvailable: 1
   - prefab: {fileID: 5708769785607809497, guid: 6675b0d8255d66942a9d9ccbab45df55, type: 3}
     isAvailable: 1
-  - prefab: {fileID: 7307626491611145941, guid: c1e50e4c05c70da4eae58f7fb3462de7, type: 3}
-    isAvailable: 1
-  - prefab: {fileID: 5195480155143250059, guid: 1932977ccfd1a534988834c859cc8d0c, type: 3}
-    isAvailable: 1
-  - prefab: {fileID: 336846398340182787, guid: 2daa1a485d4b0db4a805ab67eff7020b, type: 3}
+  - prefab: {fileID: 336846398340182787, guid: 5f5f3380c5b104f4c9684fa70ce65206, type: 3}
     isAvailable: 1
   - prefab: {fileID: 2544732491730740118, guid: 444347eb287245f43a0a9007817d2ed8, type: 3}
     isAvailable: 1
-  - prefab: {fileID: 3092180143734253507, guid: 00a26e2050093d44eb0cb69b37235943, type: 3}
+  - prefab: {fileID: 336846398340182787, guid: 103950c304bcdc0478715cddb2adce4d, type: 3}
     isAvailable: 1
-  - prefab: {fileID: 4924026098505641923, guid: 0a0bc9b9b07fc21458b79c37b4d4acee, type: 3}
+  - prefab: {fileID: 336846398340182787, guid: 5470847a01a987a40bd1e4a02da5200c, type: 3}
+    isAvailable: 1
+  - prefab: {fileID: 3092180143734253507, guid: 00a26e2050093d44eb0cb69b37235943, type: 3}
     isAvailable: 1
   - prefab: {fileID: 1207109648225288502, guid: 92418b535d49bee4d9c0bad86977fb70, type: 3}
     isAvailable: 1
   - prefab: {fileID: 3527062221405326882, guid: 68335854c9904a0489a61eb1bfbda8cb, type: 3}
+    isAvailable: 1
+  - prefab: {fileID: 3191739156982263418, guid: 08b6a804cb920de41ab10852a8a973ff, type: 3}
+    isAvailable: 1
+  - prefab: {fileID: 336846398340182787, guid: 2daa1a485d4b0db4a805ab67eff7020b, type: 3}
+    isAvailable: 1
+  - prefab: {fileID: 4924026098505641923, guid: 0a0bc9b9b07fc21458b79c37b4d4acee, type: 3}
+    isAvailable: 1
+  - prefab: {fileID: 7307626491611145941, guid: c1e50e4c05c70da4eae58f7fb3462de7, type: 3}
+    isAvailable: 1
+  - prefab: {fileID: 5195480155143250059, guid: 1932977ccfd1a534988834c859cc8d0c, type: 3}
     isAvailable: 1
   positions:
   - {fileID: 69574060}

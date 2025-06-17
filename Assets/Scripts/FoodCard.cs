@@ -9,8 +9,4 @@ public class FoodCard : MonoBehaviour
     public int dirtValue;    // Valor de suciedad que aplica al diente
     public int phImpact;     // Valor de impacto en el ph del diente que tiene el alimento
 
-    void Update()
-    {
-
-    }
 }

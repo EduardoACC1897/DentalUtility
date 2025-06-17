@@ -236,8 +236,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cureDirty: 0
-  cureCaries: 0
-  cureFracture: 0
   curePH: 0
+  cureCaries: 0
+  cureFracture: 1
   cleanValue: 0
   phRecovery: 0

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2644434129108083281}
   - component: {fileID: 5305672767922144609}
   m_Layer: 0
-  m_Name: ApplicationOfsealantsCard
+  m_Name: ApplicationOfSealantsCard
   m_TagString: CardCare
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cureDirty: 0
-  cureCaries: 0
+  cureCaries: 1
   cureFracture: 0
   curePH: 0
   cleanValue: 0

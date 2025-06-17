@@ -238,6 +238,6 @@ MonoBehaviour:
   cureDirty: 0
   cureCaries: 0
   cureFracture: 0
-  curePH: 0
+  curePH: 1
   cleanValue: 0
-  phRecovery: 0
+  phRecovery: 10

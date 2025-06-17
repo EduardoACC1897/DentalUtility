@@ -148,11 +148,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23d9057b28e9fe648acf5554c7e6ca9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cureDirty: 0
+  cureDirty: 1
+  curePH: 0
   cureCaries: 0
   cureFracture: 0
-  curePH: 0
-  cleanValue: 0
+  cleanValue: 25
   phRecovery: 0
 --- !u!1 &5534714910468866626
 GameObject:
