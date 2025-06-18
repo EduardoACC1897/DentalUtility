@@ -12,9 +12,19 @@ public class ToothCardEntry
 
 public class ToothDeck : MonoBehaviour
 {
-    public List<ToothCardEntry> toothCards; // Lista de cartas de dientes (prefabs + disponibilidad)
-    public List<ToothCardData> toothCardDataList; // Lista de los datos de las cartas de dientes
-    public Transform[] positions;           // Posiciones sobre la mesa donde aparecerán las cartas
+    public List<ToothCardEntry> toothCards;             // Lista de cartas de dientes (prefabs + disponibilidad)
+    public List<ToothCardData> toothCardDataList;       // Lista de datos base (ScriptableObjects)
+    public Dictionary<string, ToothCardData> runtimeData = new Dictionary<string, ToothCardData>(); // Copias de los datos en runtime
+    public Transform[] positions;                       // Posiciones sobre la mesa donde aparecerán las cartas
+
+    void Start()
+    {
+        // Crear copias de todos los datos originales para uso en tiempo de ejecución
+        foreach (ToothCardData original in toothCardDataList)
+        {
+            runtimeData[original.cardID] = original.Clone();
+        }
+    }
 
     // Función para obtener la cantidad de cartas disponibles en la lista
     public int GetAvailableToothCardsCount()
@@ -30,25 +40,16 @@ public class ToothDeck : MonoBehaviour
         // Itera sobre cada posición disponible
         foreach (Transform pos in positions)
         {
-            // Selecciona aleatoriamente una carta disponible del mazo
             ToothCardEntry cardEntry = GetRandomAvailableCard();
-            if (cardEntry == null) break; // Si no hay más cartas disponibles, detener
+            if (cardEntry == null) break;
 
-            // Instancia una copia del prefab en la posición actual
             GameObject instance = Instantiate(cardEntry.prefab, pos.position, Quaternion.identity);
-
-            // Marca la carta como no disponible para evitar reuso
             cardEntry.isAvailable = false;
 
-            // Cargar datos si hay coincidencia de ID
             ToothCard card = instance.GetComponent<ToothCard>();
-            if (card != null)
+            if (card != null && runtimeData.TryGetValue(card.cardID, out ToothCardData data))
             {
-                ToothCardData data = GetDataByID(card.cardID);
-                if (data != null)
-                {
-                    card.LoadData(data);
-                }
+                card.LoadData(data);
             }
 
             GameController gc = Object.FindFirstObjectByType<GameController>();
@@ -56,27 +57,17 @@ public class ToothDeck : MonoBehaviour
                 gc.RegisterToothCardCreated();
 
             posIndex++;
-            // Si ya se llenaron todas las posiciones, salir del bucle
             if (posIndex >= positions.Length) break;
         }
-    }
-
-    // Función que encuentra si existe un objeto de datos (ToothCardData) con un ID específico en la lista
-    private ToothCardData GetDataByID(string id)
-    {
-        return toothCardDataList.Find(d => d.cardID == id);
+        Debug.Log("se crearon las cartas");
     }
 
     // Función que devuelve una carta aleatoria que esté disponible
     private ToothCardEntry GetRandomAvailableCard()
     {
-        // Filtra las cartas disponibles (isAvailable == true)
         List<ToothCardEntry> available = toothCards.FindAll(card => card.isAvailable);
-
-        // Si no hay cartas disponibles, devuelve null
         if (available.Count == 0) return null;
 
-        // Selecciona una carta aleatoria del listado de disponibles
         int randomIndex = Random.Range(0, available.Count);
         return available[randomIndex];
     }
@@ -94,17 +85,17 @@ public class ToothDeck : MonoBehaviour
     // (dirtValue != 0, toothPH != 100 o state != 0)
     public void SetAvailabilityForModifiedCardsOnly()
     {
-        // Recorremos todos los datos de las cartas de diente
-        foreach (ToothCardData data in toothCardDataList)
+        foreach (KeyValuePair<string, ToothCardData> pair in runtimeData)
         {
-            // Comprobamos si esta carta tiene valores modificados
+            string id = pair.Key;
+            ToothCardData data = pair.Value;
+
             bool isModified = data.dirtValue != 0 || data.toothPH != 100 || data.state != 0;
 
-            // Buscar la carta correspondiente en la lista de toothCards por ID
             foreach (ToothCardEntry card in toothCards)
             {
                 ToothCard cardComponent = card.prefab.GetComponent<ToothCard>();
-                if (cardComponent != null && cardComponent.cardID == data.cardID)
+                if (cardComponent != null && cardComponent.cardID == id)
                 {
                     card.isAvailable = isModified;
                     break;
@@ -116,17 +107,13 @@ public class ToothDeck : MonoBehaviour
     // Función que reemplaza todas las cartas de diente activas por nuevas del mazo
     public void ReplaceAllToothCards()
     {
-        // Buscar todas las cartas activas en la escena
         ToothCard[] existingCards = Object.FindObjectsByType<ToothCard>(FindObjectsSortMode.None);
-
-        // Si no hay cartas activas, no hay nada que reemplazar
         if (existingCards.Length == 0)
         {
             Debug.Log("No hay cartas de diente activas para reemplazar.");
             return;
         }
 
-        // Verificar que existan cartas disponibles para poder crear nuevas
         int availableCount = toothCards.FindAll(c => c.isAvailable).Count;
         if (availableCount == 0)
         {
@@ -134,7 +121,6 @@ public class ToothDeck : MonoBehaviour
             return;
         }
 
-        // Guardar los IDs de las cartas que se eliminarán
         HashSet<string> idsToRestore = new HashSet<string>();
         foreach (ToothCard card in existingCards)
         {
@@ -142,10 +128,8 @@ public class ToothDeck : MonoBehaviour
             Destroy(card.gameObject);
         }
 
-        // Crear nuevas cartas
         SpawnToothCards();
 
-        // Luego de crear, marcamos como disponibles las cartas eliminadas
         GameController gc = Object.FindFirstObjectByType<GameController>();
 
         foreach (ToothCardEntry entry in toothCards)
@@ -155,7 +139,6 @@ public class ToothDeck : MonoBehaviour
             {
                 entry.isAvailable = true;
 
-                // Restar al contador global si existe GameController
                 if (gc != null)
                 {
                     gc.UnregisterToothCardCreated();
@@ -169,5 +152,4 @@ public class ToothDeck : MonoBehaviour
     {
         ReplaceAllToothCards();
     }
-
 }

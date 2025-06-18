@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class ToothCard : MonoBehaviour
 {
-    // Variables públicas
     public string cardID; // ID de la carta
     public bool grindAction; // Indica si realiza la acción de moler
     public bool cutAction; // Indica si realiza la acción de cortar
@@ -16,7 +15,6 @@ public class ToothCard : MonoBehaviour
     public int durability; // Durabilidad del diente: Sano = 0, Comprometido = 1, Crítico = 2
     public List<Sprite> stateSprites; // Lista de sprites disponibles para representar visualmente el estado del diente
 
-    // Variables privadas
     private Vector3 startPosition; // Posición inicial del diente
     private bool isDragging = false; // Controlar si el diente está siendo arrastrado
     private static bool cardInUse = false; // Controlar que solo una carta se use a la vez
@@ -119,6 +117,16 @@ public class ToothCard : MonoBehaviour
                     dirtValue += food.dirtValue;
                     dirtValue = Mathf.Clamp(dirtValue, 0, 100);
 
+                    // Verificación de suciedad
+                    if (dirtValue >= 50)
+                    {
+                        SetDirtyState(true);
+                    }
+                    else
+                    {
+                        SetDirtyState(false);
+                    }
+
                     toothPH -= food.phImpact;
                     toothPH = Mathf.Clamp(toothPH, 0, 100);
                 }
@@ -150,15 +158,17 @@ public class ToothCard : MonoBehaviour
         }
 
         if (usedSuccessfully)
-        {
-            // Buscar el objeto de datos correspondiente
+        {   
+            // Si se uso la carta, cambiar el sprite de acuerdo al estado en el que quedo
+            UpdateToothSprite();
+
+            // Buscar la copia en runtime de los datos correspondiente
             ToothDeck deck = Object.FindFirstObjectByType<ToothDeck>();
             if (deck != null)
             {
-                ToothCardData data = deck.toothCardDataList.Find(d => d.cardID == this.cardID);
-                if (data != null)
+                if (deck.runtimeData.TryGetValue(this.cardID, out ToothCardData runtimeCopy))
                 {
-                    SaveData(data); // Guardar los datos antes de destruir
+                    SaveData(runtimeCopy); // Guardar los datos en la copia para no alterar el ScriptableObject original
                 }
             }
 
@@ -166,10 +176,13 @@ public class ToothCard : MonoBehaviour
             GameController gc = Object.FindFirstObjectByType<GameController>();
             if (gc != null)
             {
-                gc.RegisterToothCardUsed();
+                if (gc.totalToothCards > 0)
+                {
+                    gc.RegisterToothCardUsed();
+                }
+                gc.CheckAndSpawnToothCardsIfNone();       
                 if (usedOnFood) gc.RegisterFoodCardUsed();
                 if (usedOnCare) gc.RegisterCareCardUsed();
-                gc.CheckAndSpawnToothCardsIfNone();
             }
 
             Destroy(gameObject); // Eliminar carta de la escena
@@ -185,10 +198,15 @@ public class ToothCard : MonoBehaviour
     {
         if (stateSprites != null && state >= 0 && state < stateSprites.Count)
         {
-            SpriteRenderer sr = GetComponent<SpriteRenderer>();
-            if (sr != null)
+            // Buscar el hijo llamado "SplashArt"
+            Transform splashArt = transform.Find("SplashArt");
+            if (splashArt != null)
             {
-                sr.sprite = stateSprites[state];
+                SpriteRenderer sr = splashArt.GetComponent<SpriteRenderer>();
+                if (sr != null)
+                {
+                    sr.sprite = stateSprites[state];
+                }
             }
         }
     }
@@ -197,6 +215,7 @@ public class ToothCard : MonoBehaviour
     public void SetFractureState(bool value)
     {
         hasFracture = value;
+        UpdateFractureVisual();
     }
 
     // Activa o desactiva el objeto hijo "Fracture" según el estado de hasFracture
@@ -213,6 +232,7 @@ public class ToothCard : MonoBehaviour
     public void SetDirtyState(bool value)
     {
         isDirty = value;
+        UpdateDirtVisual();
     }
 
     // Activa o desactiva el objeto hijo "Dirt" según el estado de isDirty

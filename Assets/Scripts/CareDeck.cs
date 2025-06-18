@@ -22,15 +22,12 @@ public class CareDeck : MonoBehaviour
 
         foreach (Transform pos in positions)
         {
-            // Obtener una carta aleatoria que esté disponible
             CareCardEntry cardEntry = GetRandomAvailableCard();
-            if (cardEntry == null) break; // Si no hay más cartas disponibles, se detiene
+            if (cardEntry == null) break;
 
-            // Instanciar una copia del prefab en la posición correspondiente
             GameObject instance = Instantiate(cardEntry.prefab, pos.position, Quaternion.identity);
 
             posIndex++;
-            // Si ya se llenaron todas las posiciones, se detiene
             if (posIndex >= positions.Length) break;
         }
     }
@@ -38,24 +35,20 @@ public class CareDeck : MonoBehaviour
     // Función que busca aleatoriamente una carta disponible del mazo
     private CareCardEntry GetRandomAvailableCard()
     {
-        // Filtra la lista para obtener solo las cartas disponibles
         List<CareCardEntry> available = careCards.FindAll(card => card.isAvailable);
-        if (available.Count == 0) return null; // Si no hay cartas disponibles, retorna null
+        if (available.Count == 0) return null;
 
-        // Selecciona una carta aleatoria del pool disponible
         int randomIndex = Random.Range(0, available.Count);
         return available[randomIndex];
     }
 
-    // Función que actualiza la disponibilidad de cartas de cuidado dental
-    // según si hay dientes con caries (state = 2 o 3) o fractura (state = 4) en la lista de datos de dientes.
-    public void UpdateCareCardAvailabilityBasedOnToothState(List<ToothCardData> toothCardDataList)
+    // ACTUALIZADO: Recibe el diccionario de datos modificables en tiempo real
+    public void UpdateCareCardAvailabilityBasedOnToothState(Dictionary<string, ToothCardData> runtimeData)
     {
         bool hasCaries = false;
         bool hasFracture = false;
 
-        // Buscar si existe alguna carta de diente con caries o fractura
-        foreach (ToothCardData data in toothCardDataList)
+        foreach (ToothCardData data in runtimeData.Values)
         {
             if (data.state == 2 || data.state == 3)
                 hasCaries = true;
@@ -64,25 +57,20 @@ public class CareDeck : MonoBehaviour
                 hasFracture = true;
         }
 
-        // Actualizar la disponibilidad según las condiciones
         for (int i = 0; i < careCards.Count; i++)
         {
             if (i >= 0 && i <= 7)
             {
-                // Siempre disponibles
                 careCards[i].isAvailable = true;
             }
             else if (i >= 8 && i <= 10)
             {
-                // Disponibles solo si hay caries
                 careCards[i].isAvailable = hasCaries;
             }
             else if (i >= 11 && i <= 12)
             {
-                // Disponibles solo si hay fractura
                 careCards[i].isAvailable = hasFracture;
             }
         }
     }
-
 }

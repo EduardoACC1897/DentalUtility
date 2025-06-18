@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class CareCard : MonoBehaviour
 {
-    // Variables públicas
     public bool cureDirty;    // Indica si cura la suciedad
     public bool curePH;       // Indica si cura el ph
     public bool cureCaries;   // Indica si cura las caries

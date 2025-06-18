@@ -11,4 +11,16 @@ public class ToothCardData : ScriptableObject
     public bool hasFracture;   // Fractura o no del diente
     public bool isDirty;       // Si el diente está sucio o no
 
+    public ToothCardData Clone()
+    {
+        ToothCardData copy = ScriptableObject.CreateInstance<ToothCardData>();
+        copy.cardID = this.cardID;
+        copy.dirtValue = this.dirtValue;
+        copy.toothPH = this.toothPH;
+        copy.state = this.state;
+        copy.durability = this.durability;
+        copy.hasFracture = this.hasFracture;
+        copy.isDirty = this.isDirty;
+        return copy;
+    }
 }

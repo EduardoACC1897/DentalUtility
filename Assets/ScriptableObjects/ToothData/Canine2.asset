@@ -16,3 +16,6 @@ MonoBehaviour:
   dirtValue: 0
   toothPH: 100
   state: 0
+  durability: 0
+  hasFracture: 0
+  isDirty: 1
