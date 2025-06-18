@@ -9,9 +9,10 @@ public class ToothCard : MonoBehaviour
     public bool cutAction; // Indica si realiza la acción de cortar
     public bool tearAction; // Indica si realiza la acción de desgarrar
     public bool hasFracture; // Indica si el diente tiene una fractura
+    public bool isDirty; // Indica si el diente está sucio
     public int dirtValue; // Valor de suciedad que tiene el diente
     public int toothPH; // Valor de ph que tiene el diente
-    public int state; // Estado del diente: Limpio = 0, Sucio = 1, Caries1 = 2, Caries2 = 3
+    public int state; // Estado del diente: Limpio = 0, Caries1 = 2, Caries2 = 3
     public int durability; // Durabilidad del diente: Sano = 0, Comprometido = 1, Crítico = 2
     public List<Sprite> stateSprites; // Lista de sprites disponibles para representar visualmente el estado del diente
 
@@ -29,8 +30,11 @@ public class ToothCard : MonoBehaviour
         state = data.state;
         durability = data.durability;
         hasFracture = data.hasFracture;
+        isDirty = data.isDirty;
 
-        UpdateToothSprite(); // Actualizar el sprite según el estado
+        UpdateToothSprite();    // Actualizar el sprite según el estado
+        UpdateFractureVisual(); // Activar o desactivar visual de fractura
+        UpdateDirtVisual();     // Activar o desactivar visual de suciedad
     }
 
     // Método de guardado de datos
@@ -41,6 +45,7 @@ public class ToothCard : MonoBehaviour
         data.state = state;
         data.durability = durability;
         data.hasFracture = hasFracture;
+        data.isDirty = isDirty;
     }
 
     // Método de inicio
@@ -193,4 +198,31 @@ public class ToothCard : MonoBehaviour
     {
         hasFracture = value;
     }
+
+    // Activa o desactiva el objeto hijo "Fracture" según el estado de hasFracture
+    private void UpdateFractureVisual()
+    {
+        Transform fracture = transform.Find("Fracture");
+        if (fracture != null)
+        {
+            fracture.gameObject.SetActive(hasFracture);
+        }
+    }
+
+    // Función que permite activar o desactivar la suciedad del diente
+    public void SetDirtyState(bool value)
+    {
+        isDirty = value;
+    }
+
+    // Activa o desactiva el objeto hijo "Dirt" según el estado de isDirty
+    private void UpdateDirtVisual()
+    {
+        Transform dirt = transform.Find("Dirt");
+        if (dirt != null)
+        {
+            dirt.gameObject.SetActive(isDirty);
+        }
+    }
+
 }
