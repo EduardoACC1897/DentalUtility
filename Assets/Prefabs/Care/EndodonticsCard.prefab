@@ -78,7 +78,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 17d63e8e3989a664bab2f2f9dcc1e51d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -148,12 +148,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23d9057b28e9fe648acf5554c7e6ca9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cleanValue: 0
+  phRecovery: 0
   cureDirty: 0
   curePH: 0
   cureCaries: 1
   cureFracture: 1
-  cleanValue: 0
-  phRecovery: 0
 --- !u!1 &2820370383356174839
 GameObject:
   m_ObjectHideFlags: 0
@@ -165,7 +165,7 @@ GameObject:
   - component: {fileID: 4833686260327644438}
   - component: {fileID: 1020004303134369064}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: SplashArt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -229,7 +229,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: 20d75664b51007a4d932828e8bb86c1b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

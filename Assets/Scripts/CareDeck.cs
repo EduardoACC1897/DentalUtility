@@ -42,34 +42,36 @@ public class CareDeck : MonoBehaviour
         return available[randomIndex];
     }
 
-    // ACTUALIZADO: Recibe el diccionario de datos modificables en tiempo real
+    // Función que recibe el diccionario de datos para establecer que cartas de cuidados deben estar disponibles
     public void UpdateCareCardAvailabilityBasedOnToothState(Dictionary<string, ToothCardData> runtimeData)
     {
         bool hasCaries = false;
         bool hasFracture = false;
 
+        // Recorre todos los datos del mazo para verificar caries o fractura
         foreach (ToothCardData data in runtimeData.Values)
         {
-            if (data.state == 2 || data.state == 3)
+            if (data.state == 1 || data.state == 2)
                 hasCaries = true;
 
-            if (data.state == 4)
+            if (data.hasFracture)
                 hasFracture = true;
         }
 
+        // Establecer la disponibilidad de cada carta según la posición y estado
         for (int i = 0; i < careCards.Count; i++)
         {
             if (i >= 0 && i <= 7)
             {
-                careCards[i].isAvailable = true;
+                careCards[i].isAvailable = true; // Siempre disponibles
             }
             else if (i >= 8 && i <= 10)
             {
-                careCards[i].isAvailable = hasCaries;
+                careCards[i].isAvailable = hasCaries; // Solo si hay caries
             }
             else if (i >= 11 && i <= 12)
             {
-                careCards[i].isAvailable = hasFracture;
+                careCards[i].isAvailable = hasFracture; // Solo si hay fractura
             }
         }
     }

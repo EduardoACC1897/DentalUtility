@@ -4,16 +4,17 @@ using UnityEngine;
 public class ToothCard : MonoBehaviour
 {
     public string cardID; // ID de la carta
+    public int dirtValue; // Valor de suciedad que tiene el diente
+    public int toothPH; // Valor de ph que tiene el diente
+    public int state; // Estado del diente: Limpio = 0, Caries1 = 1, Caries2 = 2
+    public int durability; // Durabilidad del diente: Sano = 0, Comprometido = 1, Crítico = 2
     public bool grindAction; // Indica si realiza la acción de moler
     public bool cutAction; // Indica si realiza la acción de cortar
     public bool tearAction; // Indica si realiza la acción de desgarrar
-    public bool hasFracture; // Indica si el diente tiene una fractura
     public bool isDirty; // Indica si el diente está sucio
-    public int dirtValue; // Valor de suciedad que tiene el diente
-    public int toothPH; // Valor de ph que tiene el diente
-    public int state; // Estado del diente: Limpio = 0, Caries1 = 2, Caries2 = 3
-    public int durability; // Durabilidad del diente: Sano = 0, Comprometido = 1, Crítico = 2
+    public bool hasFracture; // Indica si el diente tiene una fractura
     public List<Sprite> stateSprites; // Lista de sprites disponibles para representar visualmente el estado del diente
+    public List<Sprite> durabilitySprites; // Lista de sprites para representar la durabilidad
 
     private Vector3 startPosition; // Posición inicial del diente
     private bool isDragging = false; // Controlar si el diente está siendo arrastrado
@@ -27,12 +28,13 @@ public class ToothCard : MonoBehaviour
         toothPH = data.toothPH;
         state = data.state;
         durability = data.durability;
-        hasFracture = data.hasFracture;
         isDirty = data.isDirty;
+        hasFracture = data.hasFracture;
 
-        UpdateToothSprite();    // Actualizar el sprite según el estado
-        UpdateFractureVisual(); // Activar o desactivar visual de fractura
-        UpdateDirtVisual();     // Activar o desactivar visual de suciedad
+        UpdateToothSprite();      // Actualizar el sprite según el estado
+        UpdateDurabilitySprite(); // Actualizar el sprite según la durabilidad
+        UpdateDirtVisual();       // Activar o desactivar visual de suciedad
+        UpdateFractureVisual();   // Activar o desactivar visual de fractura   
     }
 
     // Método de guardado de datos
@@ -42,8 +44,8 @@ public class ToothCard : MonoBehaviour
         data.toothPH = toothPH;
         data.state = state;
         data.durability = durability;
-        data.hasFracture = hasFracture;
         data.isDirty = isDirty;
+        data.hasFracture = hasFracture;      
     }
 
     // Método de inicio
@@ -117,18 +119,19 @@ public class ToothCard : MonoBehaviour
                     dirtValue += food.dirtValue;
                     dirtValue = Mathf.Clamp(dirtValue, 0, 100);
 
-                    // Verificación de suciedad
                     if (dirtValue >= 50)
                     {
-                        SetDirtyState(true);
+                        isDirty = true;
                     }
                     else
                     {
-                        SetDirtyState(false);
+                        isDirty = false;
                     }
 
                     toothPH -= food.phImpact;
                     toothPH = Mathf.Clamp(toothPH, 0, 100);
+
+                    EvaluateFractureRisk();
                 }
             }
 
@@ -150,6 +153,21 @@ public class ToothCard : MonoBehaviour
                         toothPH = Mathf.Clamp(toothPH, 0, 100);
                     }
 
+                    if (care.cureCaries)
+                    {
+                        // Solo reduce si el estado es 1 (Caries1) o 2 (Caries2)
+                        if (state == 1 || state == 2)
+                        {
+                            state--;
+                            state = Mathf.Clamp(state, 0, 2);
+                        }
+                    }
+
+                    if (care.cureFracture && hasFracture)
+                    {
+                        hasFracture = false;
+                    }
+
                     Destroy(hit.gameObject);
                     usedSuccessfully = true;
                     usedOnCare = true;
@@ -158,9 +176,15 @@ public class ToothCard : MonoBehaviour
         }
 
         if (usedSuccessfully)
-        {   
-            // Si se uso la carta, cambiar el sprite de acuerdo al estado en el que quedo
-            UpdateToothSprite();
+        {
+            // Actualizar la durabilidad de acuerdo al PH
+            UpdateDurabilityBasedOnPH();
+
+            // Si se uso la carta, realizar lo siguientes ajusten visuales en la carta
+            UpdateToothSprite();      // Actualizar el sprite según el estado
+            UpdateDurabilitySprite(); // Actualizar el sprite según la durabilidad
+            UpdateDirtVisual();       // Activar o desactivar visual de suciedad
+            UpdateFractureVisual();   // Activar o desactivar visual de fractura
 
             // Buscar la copia en runtime de los datos correspondiente
             ToothDeck deck = Object.FindFirstObjectByType<ToothDeck>();
@@ -179,10 +203,11 @@ public class ToothCard : MonoBehaviour
                 if (gc.totalToothCards > 0)
                 {
                     gc.RegisterToothCardUsed();
-                }
-                gc.CheckAndSpawnToothCardsIfNone();       
+                } 
                 if (usedOnFood) gc.RegisterFoodCardUsed();
                 if (usedOnCare) gc.RegisterCareCardUsed();
+
+                gc.CheckAndSpawnToothCardsIfNone();
             }
 
             Destroy(gameObject); // Eliminar carta de la escena
@@ -211,31 +236,24 @@ public class ToothCard : MonoBehaviour
         }
     }
 
-    // Función que permite activar o desactivar la fractura del diente
-    public void SetFractureState(bool value)
+    // Función que actualiza el sprite de durabilidad según el nivel actual de durabilidad
+    private void UpdateDurabilitySprite()
     {
-        hasFracture = value;
-        UpdateFractureVisual();
-    }
-
-    // Activa o desactiva el objeto hijo "Fracture" según el estado de hasFracture
-    private void UpdateFractureVisual()
-    {
-        Transform fracture = transform.Find("Fracture");
-        if (fracture != null)
+        if (durabilitySprites != null && durability >= 0 && durability < durabilitySprites.Count)
         {
-            fracture.gameObject.SetActive(hasFracture);
+            Transform durabilityObj = transform.Find("Durability");
+            if (durabilityObj != null)
+            {
+                SpriteRenderer sr = durabilityObj.GetComponent<SpriteRenderer>();
+                if (sr != null)
+                {
+                    sr.sprite = durabilitySprites[durability];
+                }
+            }
         }
     }
 
-    // Función que permite activar o desactivar la suciedad del diente
-    public void SetDirtyState(bool value)
-    {
-        isDirty = value;
-        UpdateDirtVisual();
-    }
-
-    // Activa o desactiva el objeto hijo "Dirt" según el estado de isDirty
+    // Función para activar o desactivar el objeto hijo "Dirt" según el estado de isDirty
     private void UpdateDirtVisual()
     {
         Transform dirt = transform.Find("Dirt");
@@ -245,4 +263,47 @@ public class ToothCard : MonoBehaviour
         }
     }
 
+    // Función para activar o desactivar el objeto hijo "Fracture" según el estado de hasFracture
+    private void UpdateFractureVisual()
+    {
+        Transform fracture = transform.Find("Fracture");
+        if (fracture != null)
+        {
+            fracture.gameObject.SetActive(hasFracture);
+        }
+    }
+
+    // Función que actualiza la durabilidad del diente en base al valor actual de pH
+    private void UpdateDurabilityBasedOnPH()
+    {
+        if (toothPH <= 25)
+        {
+            durability = 2;
+        }
+        else if (toothPH <= 50)
+        {
+            durability = 1;
+        }
+        else
+        {
+            durability = 0;
+        }
+    }
+
+
+    // Función que evalúa la probabilidad de que el diente sufra una fractura y actualiza el estado si ocurre
+    private void EvaluateFractureRisk()
+    {
+        int probability = 0;
+
+        // Asignar probabilidad según la durabilidad
+        if (durability == 1)
+            probability = 25;
+        else if (durability == 2)
+            probability = 50;
+
+        // Determinar si ocurre fractura
+        int roll = Random.Range(0, 100);
+        hasFracture = roll < probability;
+    }
 }

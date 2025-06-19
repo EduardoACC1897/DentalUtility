@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4707401611788101869}
   - component: {fileID: 1489719537134674824}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: SplashArt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: 41e4cfc21de52d942a66329c9322d648, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -165,7 +165,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: fad5181dc73937747a1e605046a07a43, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -235,8 +235,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f840698cba78f5409f9d751b174e5df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dirtValue: 20
+  phImpact: 20
   grindAction: 1
   cutAction: 0
   tearAction: 0
-  dirtValue: 25
-  phImpact: 5
