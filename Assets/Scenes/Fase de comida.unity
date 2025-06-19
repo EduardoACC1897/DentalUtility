@@ -1480,6 +1480,9 @@ MonoBehaviour:
   totalToothCards: 0
   totalToothCardsCreated: 0
   usedToothCount: 0
+  carePhaseDuration: 30
+  foodPhaseTimer: 180
+  maxFoodRounds: 3
 --- !u!4 &2087884140
 Transform:
   m_ObjectHideFlags: 0
