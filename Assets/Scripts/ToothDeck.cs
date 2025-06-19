@@ -152,4 +152,106 @@ public class ToothDeck : MonoBehaviour
     {
         ReplaceAllToothCards();
     }
+
+    // Función que evalúa el riesgo de desarrollo de caries en todas las cartas
+    public void EvaluateCariesRiskForAllCards()
+    {
+        foreach (var pair in runtimeData)
+        {
+            ToothCardData data = pair.Value;
+            int probability = 0;
+
+            // Probabilidad basada en PH
+            if (data.toothPH <= 0)
+                probability += 50;
+            else if (data.toothPH <= 25)
+                probability += 30;
+            else if (data.toothPH <= 50)
+                probability += 20;
+            else if (data.toothPH <= 75)
+                probability += 10;
+
+            // Probabilidad basada en suciedad
+            if (data.dirtValue >= 100)
+                probability += 50;
+            else if (data.dirtValue >= 75)
+                probability += 30;
+            else if (data.dirtValue >= 50)
+                probability += 20;
+            else if (data.dirtValue >= 25)
+                probability += 10;
+
+            // Tirada de probabilidad (de 0 a 99)
+            int roll = Random.Range(0, 100);
+
+            // Si la tirada está dentro de la probabilidad y el estado es menor a 2, se incrementa
+            if (roll < probability && data.state < 2)
+            {
+                data.state += 1;
+                Debug.Log($"Caries: Carta con ID '{data.cardID}' aumentó su estado a {data.state} (prob: {probability}%, roll: {roll})");
+            }
+        }
+    }
+
+    // Función que evalúa el riesgo de descarte de las cartas de diente y elimina hasta 5 del mazo si corresponde.
+    public void EvaluateDiscardRiskForAllCards()
+    {
+        List<string> idsToRemove = new List<string>();                     // IDs para eliminar de runtimeData
+        List<ToothCardEntry> entriesToRemove = new List<ToothCardEntry>(); // Entradas para eliminar de toothCards
+
+        int discardCount = 0; // Contador de descartes realizados
+
+        foreach (var pair in runtimeData)
+        {
+            if (discardCount >= 5)
+                break;
+
+            string id = pair.Key;
+            ToothCardData data = pair.Value;
+
+            int probability = 0;
+
+            // Probabilidad base según el estado
+            if (data.state == 1)
+                probability += 10;
+            else if (data.state == 2)
+                probability += 25;
+
+            // Aumentar probabilidad si tiene fractura
+            if (data.hasFracture)
+                probability += 25;
+
+            int roll = Random.Range(0, 100);
+
+            if (roll < probability)
+            {
+                // Marcar para eliminar de runtimeData
+                idsToRemove.Add(id);
+
+                // Marcar para eliminar de toothCards
+                ToothCardEntry entry = toothCards.Find(card =>
+                {
+                    ToothCard c = card.prefab.GetComponent<ToothCard>();
+                    return c != null && c.cardID == id;
+                });
+
+                if (entry != null)
+                    entriesToRemove.Add(entry);
+
+                Debug.Log($"Descarte: Carta con ID '{id}' fue descartada (prob: {probability}%, roll: {roll})");
+                discardCount++;
+            }
+        }
+
+        // Aplicar eliminaciones
+        foreach (string id in idsToRemove)
+        {
+            runtimeData.Remove(id);
+        }
+
+        foreach (var entry in entriesToRemove)
+        {
+            toothCards.Remove(entry);
+        }
+    }
 }
