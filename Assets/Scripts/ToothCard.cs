@@ -112,6 +112,9 @@ public class ToothCard : MonoBehaviour
                     {
                         Destroy(hit.gameObject);
                         usedOnFood = true;
+
+                        // Calcular y agregar puntos al puntaje global según el estado y condición del diente
+                        AwardScore();
                     }
 
                     usedSuccessfully = true;
@@ -131,6 +134,7 @@ public class ToothCard : MonoBehaviour
                     toothPH -= food.phImpact;
                     toothPH = Mathf.Clamp(toothPH, 0, 100);
 
+                    // Evaluar el riesgo de fractura del diente en función de su durabilidad y aplicar el resultado
                     EvaluateFractureRisk();
                 }
             }
@@ -200,13 +204,9 @@ public class ToothCard : MonoBehaviour
             GameController gc = Object.FindFirstObjectByType<GameController>();
             if (gc != null)
             {
-                if (gc.totalToothCards > 0)
-                {
-                    gc.RegisterToothCardUsed();
-                } 
+                gc.RegisterToothCardUsed();
                 if (usedOnFood) gc.RegisterFoodCardUsed();
                 if (usedOnCare) gc.RegisterCareCardUsed();
-
                 gc.CheckAndSpawnToothCardsIfNone();
             }
 
@@ -305,5 +305,40 @@ public class ToothCard : MonoBehaviour
         // Determinar si ocurre fractura
         int roll = Random.Range(0, 100);
         hasFracture = roll < probability;
+    }
+
+    // Función para calcular y otorgar puntaje al GameController según el estado y condición del diente
+    private void AwardScore()
+    {
+        int points = 0;
+
+        // Solo asignar puntos por el estado si el diente no está fracturado
+        if (!hasFracture)
+        {
+            switch (state)
+            {
+                case 0:
+                    points += 100;
+                    break;
+                case 1:
+                    points += 50;
+                    break;
+                case 2:
+                    points += 25;
+                    break;
+            }
+        }
+        else
+        {
+            // Penalización por fractura
+            points -= 100;
+        }
+
+        // Sumar al puntaje global, asegurando que nunca sea menor a 0
+        GameController gc = Object.FindFirstObjectByType<GameController>();
+        if (gc != null)
+        {
+            gc.score = Mathf.Max(0, gc.score + points);
+        }
     }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class GameController : MonoBehaviour
 {
@@ -19,16 +20,24 @@ public class GameController : MonoBehaviour
     private Vector2 foodDeckPosition = new Vector2(8f, 3f);
     private Vector2 careDeckPosition = new Vector2(8f, 3f);
 
-    // Timer para la fase de cuidado
-    public float carePhaseDuration;    // Duración total
-    public float carePhaseTimer = 0f;  // Temporizador
-
     // Timer para la fase de comida
-    public float foodPhaseTimer;    // Duración total
+    public float foodPhaseTimer; // Duración total
+
+    // Timer para la fase de cuidado
+    public float carePhaseDuration;   // Duración total
+    public float carePhaseTimer = 0f; // Temporizador
 
     // Rondas de fase de comida
-    public int maxFoodRounds;          // Rondas necesarias para pasar a fase de cuidado
+    public int maxFoodRounds;         // Rondas necesarias para pasar a fase de cuidado
     public int currentFoodRounds = 0; // Rondas de comida actuales
+
+    // Puntaje total acumulado
+    public int score = 0;
+
+    // Textos UI
+    public TMP_Text timerText;
+    public TMP_Text roundsText;
+    public TMP_Text scoreText;
 
     void Start()
     {
@@ -52,6 +61,9 @@ public class GameController : MonoBehaviour
                 ChangePhase(); // Cambiar automáticamente a la fase de comida
             }
         }
+
+        // Actualizar UI
+        UpdateUI();
     }
 
 
@@ -103,6 +115,7 @@ public class GameController : MonoBehaviour
 
         // Mostrar todos los dientes
         toothDeck.ResetCardAvailability();
+
         UpdateAvailableToothCardsCount();
         toothDeck.SpawnToothCards();
         foodDeck.SpawnFoodCards();
@@ -142,6 +155,7 @@ public class GameController : MonoBehaviour
         {
             careDeck.UpdateCareCardAvailabilityBasedOnToothState(toothDeck.runtimeData);
         }
+
         // Mostrar solo dientes modificados
         toothDeck.SetAvailabilityForModifiedCardsOnly();
 
@@ -173,13 +187,18 @@ public class GameController : MonoBehaviour
         }
     }
 
-
     // Función para actualizar el contador de cartas de diente disponibles
     public void UpdateAvailableToothCardsCount()
     {
         if (toothDeck != null)
         {
             totalToothCards = toothDeck.GetAvailableToothCardsCount();
+
+            // Si estamos en la fase de cuidado, sumar 1 extra
+            if (phase == 2)
+            {
+                totalToothCards += 1;
+            }
         }
     }
 
@@ -266,5 +285,25 @@ public class GameController : MonoBehaviour
             usedCareCount = 0;
             careDeck.SpawnCareCards();
         }
+    }
+
+    // Función que actualiza los elementos visuales de texto en la UI
+    private void UpdateUI()
+    {
+        // Mostrar el tiempo correspondiente a la fase actual
+        if (phase == 1)
+        {
+            timerText.text = "Tiempo: " + foodPhaseTimer.ToString("F1") + "s";
+            roundsText.text = $"Ronda: {currentFoodRounds + 1}/{maxFoodRounds}";
+            roundsText.gameObject.SetActive(true); // Mostrar las rondas solo en la fase de comida (1)
+        }
+        else if (phase == 2)
+        {
+            timerText.text = "Tiempo: " + carePhaseTimer.ToString("F1") + "s";
+            roundsText.gameObject.SetActive(false); // Ocultar rondas durante la fase de cuidado (2)
+        }
+
+        // Puntaje
+        scoreText.text = "Puntaje: " + score.ToString();
     }
 }

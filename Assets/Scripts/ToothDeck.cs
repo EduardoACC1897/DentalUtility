@@ -92,12 +92,18 @@ public class ToothDeck : MonoBehaviour
 
             bool isModified = data.dirtValue != 0 || data.toothPH != 100 || data.state != 0;
 
+            if (!isModified)
+            {
+                Debug.Log($"[SetAvailability] Carta NO modificada = ID: {id} | Dirt: {data.dirtValue}, PH: {data.toothPH}, State: {data.state}");
+            }
+
             foreach (ToothCardEntry card in toothCards)
             {
                 ToothCard cardComponent = card.prefab.GetComponent<ToothCard>();
                 if (cardComponent != null && cardComponent.cardID == id)
                 {
                     card.isAvailable = isModified;
+                    Debug.Log($"[SetAvailability] Carta SI modificada = ID: {id} | Dirt: {data.dirtValue}, PH: {data.toothPH}, State: {data.state}");
                     break;
                 }
             }
