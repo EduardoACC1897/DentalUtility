@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 public class GameController : MonoBehaviour
 {
@@ -17,8 +19,8 @@ public class GameController : MonoBehaviour
     private int usedCareCount = 0;
 
     // Posiciones para mostrar mazos
-    private Vector2 foodDeckPosition = new Vector2(8f, 3f);
-    private Vector2 careDeckPosition = new Vector2(8f, 3f);
+    private Vector2 foodDeckPosition = new Vector2(7.5f, 3.25f);
+    private Vector2 careDeckPosition = new Vector2(7.5f, 3.25f);
 
     // Timer para la fase de comida
     public float foodPhaseTimer; // Duración total
@@ -39,6 +41,16 @@ public class GameController : MonoBehaviour
     public TMP_Text roundsText;
     public TMP_Text scoreText;
 
+    // Sprites de fondo y posición del renderer
+    public Sprite bgSpriteFood, bgSpriteCare;
+    public SpriteRenderer bgRenderer;
+    private Vector2 bgCenterOffset = new Vector2(0, 0);
+
+    public GameObject gameOverPanel; // Panel que contiene todos los elementos del Game Over
+    public TMP_Text finalScoreText; // Texto para mostrar el puntaje final
+    public bool isGameOver = false; // Bandera para controlar el estado del juego
+
+
     void Start()
     {
         Phase();
@@ -46,6 +58,9 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
+        gameOver();
+        if (isGameOver) return;
+
         if (phase == 1)
         {
             foodPhaseTimer -= Time.deltaTime;
@@ -64,6 +79,32 @@ public class GameController : MonoBehaviour
 
         // Actualizar UI
         UpdateUI();
+    }
+
+    // Se muestra el panel de game over con el puntaje final
+    private void ShowGameOverScreen()
+    {
+        Time.timeScale = 0f;
+
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+        }
+
+        if (finalScoreText != null)
+        {
+            finalScoreText.text = "Final Score: " + score.ToString();
+        }
+    }
+
+    // Verifica si el timer llega a 0
+    void gameOver()
+    {
+        if (foodPhaseTimer <= 0f && !isGameOver)
+        {
+            isGameOver = true;
+            ShowGameOverScreen();
+        }
     }
 
 
@@ -119,6 +160,8 @@ public class GameController : MonoBehaviour
         UpdateAvailableToothCardsCount();
         toothDeck.SpawnToothCards();
         foodDeck.SpawnFoodCards();
+        bgRenderer.sprite = bgSpriteFood;
+        bgRenderer.transform.position = Vector3.zero + (Vector3)bgCenterOffset;
     }
 
     // Función para iniciar la fase 2 (fase de cuidado dental)
@@ -162,6 +205,7 @@ public class GameController : MonoBehaviour
         UpdateAvailableToothCardsCount();
         toothDeck.SpawnToothCards();
         careDeck.SpawnCareCards();
+        bgRenderer.sprite = bgSpriteCare;
     }
 
     // Cambia entre la fase de comida y la de cuidado dental

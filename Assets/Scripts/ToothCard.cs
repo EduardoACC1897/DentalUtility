@@ -55,6 +55,23 @@ public class ToothCard : MonoBehaviour
         startPosition = transform.position;
         // Obtener el BoxCollider2D para manejar las colisiones
         boxCollider = GetComponent<BoxCollider2D>();
+
+        GameObject cutIcon = transform.Find("Cut").gameObject;
+        GameObject tearIcon = transform.Find("Tear").gameObject;
+        GameObject grindIcon = transform.Find("Grind").gameObject;
+
+        if (grindAction == false)
+        {
+            grindIcon.SetActive(false);
+        }
+        if (tearAction == false)
+        {
+            tearIcon.SetActive(false);
+        }
+        if (cutAction == false)
+        {
+            cutIcon.SetActive(false);
+        }
     }
 
     // Método de actualización
@@ -104,9 +121,47 @@ public class ToothCard : MonoBehaviour
                 FoodCard food = hit.GetComponent<FoodCard>();
                 if (food != null)
                 {
-                    if (grindAction && food.grindAction) food.grindAction = false;
-                    if (cutAction && food.cutAction) food.cutAction = false;
-                    if (tearAction && food.tearAction) food.tearAction = false;
+                    if (grindAction && food.grindAction)
+                    {
+                        food.grindAction = false;
+                        Transform grindObj = food.transform.Find("Grind");
+                        if (grindObj != null)
+                        {
+                            SpriteRenderer sr = grindObj.GetComponent<SpriteRenderer>();
+                            if (sr != null)
+                            {
+                                sr.color = new Color(0.5f, 0.5f, 0.5f); // Gris medio
+                            }
+                        }
+                    }
+
+                    if (cutAction && food.cutAction)
+                    {
+                        food.cutAction = false;
+                        Transform cutObj = food.transform.Find("Cut");
+                        if (cutObj != null)
+                        {
+                            SpriteRenderer sr = cutObj.GetComponent<SpriteRenderer>();
+                            if (sr != null)
+                            {
+                                sr.color = new Color(0.5f, 0.5f, 0.5f); // Gris medio
+                            }
+                        }
+                    }
+
+                    if (tearAction && food.tearAction)
+                    {
+                        food.tearAction = false;
+                        Transform tearObj = food.transform.Find("Tear");
+                        if (tearObj != null)
+                        {
+                            SpriteRenderer sr = tearObj.GetComponent<SpriteRenderer>();
+                            if (sr != null)
+                            {
+                                sr.color = new Color(0.5f, 0.5f, 0.5f); // Gris medio
+                            }
+                        }
+                    }
 
                     if (!food.grindAction && !food.cutAction && !food.tearAction)
                     {
