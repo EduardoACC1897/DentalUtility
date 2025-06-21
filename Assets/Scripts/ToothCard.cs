@@ -117,7 +117,7 @@ public class ToothCard : MonoBehaviour
             isDragging = true;
             cardInUse = true;
             boxCollider.enabled = false;
-            AdjustOrderInLayer(1);
+            AdjustOrderInLayer(2);
         }
     }
 
@@ -295,7 +295,7 @@ public class ToothCard : MonoBehaviour
         }
         else
         {
-            AdjustOrderInLayer(-1); // Restaurar el orden original
+            AdjustOrderInLayer(-2); // Restaurar el orden original
             transform.position = startPosition;
         }
     }
@@ -424,23 +424,30 @@ public class ToothCard : MonoBehaviour
         }
     }
 
-    // Función para ajustar dinámicamente el orden de renderizado (sortingOrder) del objeto principal y todos sus hijos.
+    // Función para ajustar dinámicamente el orden de renderizado (sortingOrder)
+    // para componentes SpriteRenderer y Canvas dentro del objeto y sus hijos.
     private void AdjustOrderInLayer(int delta)
     {
-        // Modificar el orden del objeto principal
+        // Ajustar el SpriteRenderer principal si existe
         SpriteRenderer rootRenderer = GetComponent<SpriteRenderer>();
         if (rootRenderer != null)
         {
             rootRenderer.sortingOrder += delta;
         }
 
-        // Modificar el orden de todos los hijos
-        foreach (SpriteRenderer childRenderer in GetComponentsInChildren<SpriteRenderer>())
+        // Ajustar los SpriteRenderer hijos
+        foreach (SpriteRenderer sr in GetComponentsInChildren<SpriteRenderer>())
         {
-            if (childRenderer != rootRenderer) // Ya se modificó el root
+            if (sr != rootRenderer) // Evitar duplicado en el principal
             {
-                childRenderer.sortingOrder += delta;
+                sr.sortingOrder += delta;
             }
+        }
+
+        // Ajustar todos los Canvas del objeto y sus hijos
+        foreach (Canvas canvas in GetComponentsInChildren<Canvas>())
+        {
+            canvas.sortingOrder += delta;
         }
     }
 
