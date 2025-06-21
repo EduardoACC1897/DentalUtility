@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ToothCard : MonoBehaviour
 {
@@ -21,6 +22,9 @@ public class ToothCard : MonoBehaviour
     private static bool cardInUse = false; // Controlar que solo una carta se use a la vez
     private BoxCollider2D boxCollider; // Collider del objeto
 
+    public Image dirtBarFill;   // Referencia a la imagen de relleno de la barra de suciedad
+    public Image phBarFill;     // Referencia a la imagen de relleno de la barra de pH
+
     // Método de carga de datos
     public void LoadData(ToothCardData data)
     {
@@ -34,7 +38,8 @@ public class ToothCard : MonoBehaviour
         UpdateToothSprite();      // Actualizar el sprite según el estado
         UpdateDurabilitySprite(); // Actualizar el sprite según la durabilidad
         UpdateDirtVisual();       // Activar o desactivar visual de suciedad
-        UpdateFractureVisual();   // Activar o desactivar visual de fractura   
+        UpdateFractureVisual();   // Activar o desactivar visual de fractura                        
+        UpdateProgressBars();     // Actualizar barras de suciedad y PH
     }
 
     // Método de guardado de datos
@@ -77,6 +82,19 @@ public class ToothCard : MonoBehaviour
     // Método de actualización
     void Update()
     {
+        // Cancelar arrastre si el juego ha terminado
+        GameController gc = Object.FindFirstObjectByType<GameController>();
+        if (gc != null && gc.isGameOver && isDragging)
+        {
+            
+            isDragging = false;
+            cardInUse = false;
+            boxCollider.enabled = true;
+            transform.position = startPosition;
+            AdjustOrderInLayer(-1);
+            return;
+        }
+
         // Si la carta está siendo arrastrada, mover su posición según la posición del mouse
         if (isDragging)
         {
@@ -89,12 +107,17 @@ public class ToothCard : MonoBehaviour
     // Método al presionar el mouse
     void OnMouseDown()
     {
+        // Cancelar arrastre si el juego ha terminado
+        GameController gc = Object.FindFirstObjectByType<GameController>();
+        if (gc != null && gc.isGameOver) return;
+
         // Si no hay ninguna carta siendo utilizada, se permite el arrastre
         if (!cardInUse)
         {
             isDragging = true;
-            cardInUse = true; // Marcar que una carta está en uso
-            boxCollider.enabled = false; // Desactivar el collider para evitar colisiones mientras se arrastra
+            cardInUse = true;
+            boxCollider.enabled = false;
+            AdjustOrderInLayer(1);
         }
     }
 
@@ -236,6 +259,9 @@ public class ToothCard : MonoBehaviour
 
         if (usedSuccessfully)
         {
+            // Actualizar barras de suciedad y PH
+            UpdateProgressBars();
+
             // Actualizar la durabilidad de acuerdo al PH
             UpdateDurabilityBasedOnPH();
 
@@ -269,6 +295,7 @@ public class ToothCard : MonoBehaviour
         }
         else
         {
+            AdjustOrderInLayer(-1); // Restaurar el orden original
             transform.position = startPosition;
         }
     }
@@ -395,5 +422,35 @@ public class ToothCard : MonoBehaviour
         {
             gc.score = Mathf.Max(0, gc.score + points);
         }
+    }
+
+    // Función para ajustar dinámicamente el orden de renderizado (sortingOrder) del objeto principal y todos sus hijos.
+    private void AdjustOrderInLayer(int delta)
+    {
+        // Modificar el orden del objeto principal
+        SpriteRenderer rootRenderer = GetComponent<SpriteRenderer>();
+        if (rootRenderer != null)
+        {
+            rootRenderer.sortingOrder += delta;
+        }
+
+        // Modificar el orden de todos los hijos
+        foreach (SpriteRenderer childRenderer in GetComponentsInChildren<SpriteRenderer>())
+        {
+            if (childRenderer != rootRenderer) // Ya se modificó el root
+            {
+                childRenderer.sortingOrder += delta;
+            }
+        }
+    }
+
+    // Función para actualizar las barras visualmente
+    public void UpdateProgressBars()
+    {
+        if (dirtBarFill != null)
+            dirtBarFill.fillAmount = dirtValue / 100f;
+
+        if (phBarFill != null)
+            phBarFill.fillAmount = toothPH / 100f;
     }
 }

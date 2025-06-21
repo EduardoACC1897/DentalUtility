@@ -222,9 +222,9 @@ public class GameController : MonoBehaviour
         {
             phase = 1;
 
-            // Evaluar el riesgo de aparición de caries y descartar dientes dañados
-            toothDeck.EvaluateCariesRiskForAllCards();
+            // Evaluar el riesgo de descartar dientes dañados y aparición de caries 
             toothDeck.EvaluateDiscardRiskForAllCards();
+            toothDeck.EvaluateCariesRiskForAllCards();
 
             // Cambiar a la fase de comida
             FoodPhase();
