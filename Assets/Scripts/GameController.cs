@@ -337,13 +337,13 @@ public class GameController : MonoBehaviour
         // Mostrar el tiempo correspondiente a la fase actual
         if (phase == 1)
         {
-            timerText.text = "Tiempo: " + foodPhaseTimer.ToString("F1") + "s";
+            timerText.text = "Tiempo: " + ((int)foodPhaseTimer) + "s";
             roundsText.text = $"Ronda: {currentFoodRounds + 1}/{maxFoodRounds}";
             roundsText.gameObject.SetActive(true); // Mostrar las rondas solo en la fase de comida (1)
         }
         else if (phase == 2)
         {
-            timerText.text = "Tiempo: " + carePhaseTimer.ToString("F1") + "s";
+            timerText.text = "Tiempo: " + ((int)carePhaseTimer) + "s";
             roundsText.gameObject.SetActive(false); // Ocultar rondas durante la fase de cuidado (2)
         }
 
