@@ -9,8 +9,11 @@ EditorBuildSettings:
     path: Assets/Scenes/Juego.unity
     guid: fb1cb0e4034d97a41a4fe415afa69141
   - enabled: 1
-    path: Assets/Scenes/Pantalla de inicio.unity
+    path: Assets/Scenes/Inicio.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/Tutorial.unity
+    guid: eee6d7bbf1545eb41a91a55324084df6
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
