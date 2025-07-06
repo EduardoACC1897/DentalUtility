@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a47cd6d878ccf0248b043c011fbfadf0
+guid: 2ef1adf7cb0867d4ebf5ec80dacdd82c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6500552663807381680
-    second: TransicionCambioDeCarta_0
+      213: 7074683015865561378
+    second: TransicionCaries_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TransicionCambioDeCarta_0
+      name: TransicionCaries_0
       rect:
         serializedVersion: 2
         x: 0
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 05faa0e2bc569c5a0800000000000000
-      internalID: -6500552663807381680
+      spriteID: 221f72b38b25e2260800000000000000
+      internalID: 7074683015865561378
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      TransicionCambioDeCarta_0: -6500552663807381680
+      TransicionCaries_0: 7074683015865561378
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
