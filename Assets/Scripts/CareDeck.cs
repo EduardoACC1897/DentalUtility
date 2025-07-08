@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 // Clase que representa una entrada en el mazo de cuidado dental.
 // Contiene un prefab de carta y un indicador de disponibilidad.
@@ -25,7 +26,13 @@ public class CareDeck : MonoBehaviour
             CareCardEntry cardEntry = GetRandomAvailableCard();
             if (cardEntry == null) break;
 
-            GameObject instance = Instantiate(cardEntry.prefab, pos.position, Quaternion.identity);
+            // Instanciar en la posición del mazo
+            Vector3 startPos = transform.position;
+            GameObject instance = Instantiate(cardEntry.prefab, startPos, Quaternion.identity);
+
+            // Animar hacia la posición de destino
+            float duration = 0.3f;
+            instance.transform.DOMove(pos.position, duration).SetEase(Ease.OutQuad);
 
             posIndex++;
             if (posIndex >= positions.Length) break;

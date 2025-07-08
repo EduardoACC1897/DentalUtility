@@ -1,4 +1,5 @@
 using UnityEngine;
+using DG.Tweening;
 
 public class FoodCard : MonoBehaviour
 {
@@ -7,4 +8,26 @@ public class FoodCard : MonoBehaviour
     public bool grindAction; // Indica si necesita la acción de moler
     public bool cutAction;   // Indica si necesita la acción de cortar
     public bool tearAction;  // Indica si necesita la acción de desgarrar
+
+    private BoxCollider2D boxCollider; // Referencia al collider de la carta
+
+    void Start()
+    {
+        boxCollider = GetComponent<BoxCollider2D>();
+    }
+
+    // Función para animar la destrucción de la carta
+    public void PlayDestroyAnimation()
+    {
+        // Desactivar el collider para evitar interacción durante la animación
+        boxCollider.enabled = false;
+
+        // Mover hacia arriba y luego destruir
+        transform.DOMoveY(transform.position.y + 5f, 0.3f)
+            .SetEase(Ease.InOutQuad)
+            .OnComplete(() =>
+            {
+                Destroy(gameObject);
+            });
+    }
 }

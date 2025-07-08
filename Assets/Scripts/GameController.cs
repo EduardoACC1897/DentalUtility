@@ -50,6 +50,9 @@ public class GameController : MonoBehaviour
     public TMP_Text finalScoreText; // Texto para mostrar el puntaje final
     public bool isGameOver = false; // Bandera para controlar el estado del juego
 
+    public bool isTransitioning = false; // Indica si se está realizando una transición entre fases
+    public bool canUseCards = true; // Controla si el jugador puede interactuar con las cartas
+
 
     void Start()
     {
@@ -59,12 +62,12 @@ public class GameController : MonoBehaviour
     void Update()
     {
         gameOver();
-        if (isGameOver) return;
+        if (isGameOver || isTransitioning) return;
 
         if (phase == 1)
         {
             foodPhaseTimer -= Time.deltaTime;
-            foodPhaseTimer = Mathf.Max(0f, foodPhaseTimer); // Prevenir que sea negativo
+            foodPhaseTimer = Mathf.Max(0f, foodPhaseTimer);
         }
         else if (phase == 2)
         {
@@ -73,17 +76,32 @@ public class GameController : MonoBehaviour
             if (carePhaseTimer <= 0f)
             {
                 carePhaseTimer = 0f;
-                ChangePhase(); // Cambiar automáticamente a la fase de comida
+                StartCoroutine(TransitionToNextPhase());
             }
         }
 
-        // Actualizar UI
         UpdateUI();
+    }
+
+    // Corrutina que realiza una pausa de 3 segundos antes de cambiar de fase.
+    // Durante la pausa se bloquea el uso de cartas y se indica que está en transición.
+    private System.Collections.IEnumerator TransitionToNextPhase()
+    {
+        isTransitioning = true;
+        canUseCards = false; // Bloquear uso de cartas
+
+        yield return new WaitForSeconds(3f); // Esperar 3 segundos
+
+        ChangePhase(); // Cambiar fase
+
+        canUseCards = true; // Volver a permitir uso de cartas
+        isTransitioning = false;
     }
 
     // Se muestra el panel de game over con el puntaje final
     private void ShowGameOverScreen()
     {
+        canUseCards = false;
         Time.timeScale = 0f;
 
         if (gameOverPanel != null)
@@ -309,7 +327,7 @@ public class GameController : MonoBehaviour
             if (currentFoodRounds >= maxFoodRounds)
             {
                 maxFoodRounds++;  // Aumenta la dificultad (más rondas para la próxima vez)
-                ChangePhase();    // Cambio automático a fase 2
+                StartCoroutine(TransitionToNextPhase()); // Cambio automático a fase 2
             }
             else
             {

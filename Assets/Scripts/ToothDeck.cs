@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 // Clase que representa una entrada en el mazo de dientes.
 // Contiene un prefab de carta y un indicador de disponibilidad.
@@ -37,13 +38,15 @@ public class ToothDeck : MonoBehaviour
     {
         int posIndex = 0; // Índice para recorrer las posiciones
 
-        // Itera sobre cada posición disponible
         foreach (Transform pos in positions)
         {
             ToothCardEntry cardEntry = GetRandomAvailableCard();
             if (cardEntry == null) break;
 
-            GameObject instance = Instantiate(cardEntry.prefab, pos.position, Quaternion.identity);
+            // Instanciar en la posición del mazo (la posición del objeto ToothDeck)
+            Vector3 startPos = transform.position;
+
+            GameObject instance = Instantiate(cardEntry.prefab, startPos, Quaternion.identity);
             cardEntry.isAvailable = false;
 
             ToothCard card = instance.GetComponent<ToothCard>();
@@ -52,6 +55,19 @@ public class ToothDeck : MonoBehaviour
                 card.LoadData(data);
             }
 
+            // Animación hacia la posición destino
+            float duration = 0.3f;
+            instance.transform.DOMove(pos.position, duration)
+                .SetEase(Ease.OutQuad)
+                .OnComplete(() =>
+                {
+                    // Asignar la posición final como startPosition después de que la animación termina
+                    if (card != null)
+                    {
+                        card.startPosition = pos.position;
+                    }
+                });
+
             GameController gc = Object.FindFirstObjectByType<GameController>();
             if (gc != null)
                 gc.RegisterToothCardCreated();
@@ -59,7 +75,6 @@ public class ToothDeck : MonoBehaviour
             posIndex++;
             if (posIndex >= positions.Length) break;
         }
-        Debug.Log("se crearon las cartas");
     }
 
     // Función que devuelve una carta aleatoria que esté disponible

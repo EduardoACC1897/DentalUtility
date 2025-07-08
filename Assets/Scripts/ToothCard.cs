@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class ToothCard : MonoBehaviour
 {
@@ -16,8 +17,8 @@ public class ToothCard : MonoBehaviour
     public bool hasFracture; // Indica si el diente tiene una fractura
     public List<Sprite> stateSprites; // Lista de sprites disponibles para representar visualmente el estado del diente
     public List<Sprite> durabilitySprites; // Lista de sprites para representar la durabilidad
-
-    private Vector3 startPosition; // Posición inicial del diente
+    public Vector3 startPosition; // Posición inicial del diente
+    
     private bool isDragging = false; // Controlar si el diente está siendo arrastrado
     private static bool cardInUse = false; // Controlar que solo una carta se use a la vez
     private BoxCollider2D boxCollider; // Collider del objeto
@@ -56,8 +57,6 @@ public class ToothCard : MonoBehaviour
     // Método de inicio
     void Start()
     {
-        // Guardamos la posición inicial del diente
-        startPosition = transform.position;
         // Obtener el BoxCollider2D para manejar las colisiones
         boxCollider = GetComponent<BoxCollider2D>();
 
@@ -84,7 +83,7 @@ public class ToothCard : MonoBehaviour
     {
         // Cancelar arrastre si el juego ha terminado
         GameController gc = Object.FindFirstObjectByType<GameController>();
-        if (gc != null && gc.isGameOver && isDragging)
+        if (gc != null && (!gc.canUseCards || gc.isGameOver) && isDragging)
         {
             
             isDragging = false;
@@ -109,7 +108,7 @@ public class ToothCard : MonoBehaviour
     {
         // Cancelar arrastre si el juego ha terminado
         GameController gc = Object.FindFirstObjectByType<GameController>();
-        if (gc != null && gc.isGameOver) return;
+        if (gc != null && (!gc.canUseCards || gc.isGameOver)) return;
 
         // Si no hay ninguna carta siendo utilizada, se permite el arrastre
         if (!cardInUse)
@@ -188,7 +187,7 @@ public class ToothCard : MonoBehaviour
 
                     if (!food.grindAction && !food.cutAction && !food.tearAction)
                     {
-                        Destroy(hit.gameObject);
+                        food.PlayDestroyAnimation();
                         usedOnFood = true;
 
                         // Calcular y agregar puntos al puntaje global según el estado y condición del diente
@@ -250,7 +249,7 @@ public class ToothCard : MonoBehaviour
                         hasFracture = false;
                     }
 
-                    Destroy(hit.gameObject);
+                    care.PlayDestroyAnimation();
                     usedSuccessfully = true;
                     usedOnCare = true;
                 }
@@ -291,14 +290,54 @@ public class ToothCard : MonoBehaviour
                 gc.CheckAndSpawnToothCardsIfNone();
             }
 
-            Destroy(gameObject); // Eliminar carta de la escena
+            PlayUseAnimation(); // Animación al usar la carta
         }
         else
         {
-            AdjustOrderInLayer(-2); // Restaurar el orden original
-            transform.position = startPosition;
+            // Desactivar el collider para evitar interacción durante la animación
+            boxCollider.enabled = false;
+
+            // Animación de volver la carta a la posición original
+            transform.DOMove(startPosition, 0.3f)
+                .SetEase(Ease.OutCubic)
+                .OnComplete(() =>
+                {
+                    AdjustOrderInLayer(-2);     // Restaurar orden en capa
+                    boxCollider.enabled = true; // Reactivar collider
+                });
         }
     }
+
+    // Función de animación de uso de carta de diente
+    public void PlayUseAnimation()
+    {
+        // Desactivar collider
+        boxCollider.enabled = false;
+
+        // Crear una secuencia de animaciones
+        Sequence seq = DOTween.Sequence();
+
+        float liftDuration = 0.15f;
+        float fallDuration = 0.3f;
+        Vector3 liftOffset = transform.position + new Vector3(0f, 1f, 0f);
+
+        // Subir ligeramente antes de caer
+        seq.Append(transform.DOMove(liftOffset, liftDuration).SetEase(Ease.OutQuad));
+
+        // Movimiento hacia la posición objetivo
+        seq.Append(transform.DOMove(new Vector3(-7.5f, -3f, 0f), fallDuration).SetEase(Ease.InBack));
+
+        // Caída con rotación y escala
+        seq.Join(transform.DORotate(new Vector3(0f, 0f, 180f), fallDuration, RotateMode.FastBeyond360));
+        seq.Join(transform.DOScale(Vector3.zero, fallDuration).SetEase(Ease.InQuad));
+
+        // Destruir al finalizar
+        seq.OnComplete(() =>
+        {
+            Destroy(gameObject);
+        });
+    }
+
 
     // Función que actualiza el sprite visual del diente en base al estado actual
     private void UpdateToothSprite()

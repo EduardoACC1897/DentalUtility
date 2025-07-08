@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class FoodDeck : MonoBehaviour
 {
@@ -18,8 +19,13 @@ public class FoodDeck : MonoBehaviour
             // Selecciona aleatoriamente un prefab de carta de comida de la lista
             GameObject prefab = foodCards[Random.Range(0, foodCards.Count)];
 
-            // Instancia el prefab en la posición correspondiente
-            Instantiate(prefab, positions[i].position, Quaternion.identity);
+            // Instanciar en la posición del mazo (FoodDeck)
+            Vector3 startPos = transform.position;
+            GameObject instance = Instantiate(prefab, startPos, Quaternion.identity);
+
+            // Animar hacia su posición destino
+            float duration = 0.3f;
+            instance.transform.DOMove(positions[i].position, duration).SetEase(Ease.OutQuad);
         }
     }
 }
