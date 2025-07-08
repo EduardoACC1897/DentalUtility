@@ -907,6 +907,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 2110140e97d9db84a85440ee6d84e903, type: 3}
   - {fileID: 21300000, guid: 425003cb90eb7c7478f2394db3f382fc, type: 3}
   - {fileID: 21300000, guid: a890626cdcbb39f4baa3ca5c7fb29765, type: 3}
+  startPosition: {x: 0, y: 0, z: 0}
+  isAnimating: 0
+  isAnimatingButton: 0
   dirtBarFill: {fileID: 578157172289174090}
   phBarFill: {fileID: 7629350870115436583}
 --- !u!1 &7262230564582540637

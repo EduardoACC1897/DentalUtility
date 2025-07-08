@@ -21,6 +21,9 @@ public class ToothCard : MonoBehaviour
     
     private bool isDragging = false; // Controlar si el diente está siendo arrastrado
     private static bool cardInUse = false; // Controlar que solo una carta se use a la vez
+    public bool isAnimating = false; // Indica si la carta está siendo animada
+    public bool isAnimatingButton = false; // Indicar si la carta está siendo animada para usar el botón
+    private Tween returnTween;       // Tween de retorno a posición
     private BoxCollider2D boxCollider; // Collider del objeto
 
     public Image dirtBarFill;   // Referencia a la imagen de relleno de la barra de suciedad
@@ -36,11 +39,12 @@ public class ToothCard : MonoBehaviour
         isDirty = data.isDirty;
         hasFracture = data.hasFracture;
 
-        UpdateToothSprite();      // Actualizar el sprite según el estado
-        UpdateDurabilitySprite(); // Actualizar el sprite según la durabilidad
-        UpdateDirtVisual();       // Activar o desactivar visual de suciedad
-        UpdateFractureVisual();   // Activar o desactivar visual de fractura                        
-        UpdateProgressBars();     // Actualizar barras de suciedad y PH
+        UpdateToothSprite();         // Actualizar el sprite según el estado
+        UpdateDurabilityBasedOnPH(); // Actualizar la durabilidad de acuerdo al PH
+        UpdateDurabilitySprite();    // Actualizar el sprite según la durabilidad
+        UpdateDirtVisual();          // Activar o desactivar visual de suciedad
+        UpdateFractureVisual();      // Activar o desactivar visual de fractura                        
+        UpdateProgressBars();        // Actualizar barras de suciedad y PH
     }
 
     // Método de guardado de datos
@@ -294,16 +298,25 @@ public class ToothCard : MonoBehaviour
         }
         else
         {
+            // Marcar como animando
+            isAnimatingButton = true;
+
             // Desactivar el collider para evitar interacción durante la animación
             boxCollider.enabled = false;
 
             // Animación de volver la carta a la posición original
-            transform.DOMove(startPosition, 0.3f)
+            // Además, guardar el tween actual
+            returnTween = transform.DOMove(startPosition, 0.3f)
                 .SetEase(Ease.OutCubic)
                 .OnComplete(() =>
                 {
-                    AdjustOrderInLayer(-2);     // Restaurar orden en capa
-                    boxCollider.enabled = true; // Reactivar collider
+                    if (this != null)
+                    {
+                        AdjustOrderInLayer(-2);
+                        boxCollider.enabled = true;
+                        isAnimatingButton = false;
+                        returnTween = null;
+                    }
                 });
         }
     }
@@ -311,6 +324,9 @@ public class ToothCard : MonoBehaviour
     // Función de animación de uso de carta de diente
     public void PlayUseAnimation()
     {
+        // Marcar como animando
+        isAnimating = true;
+
         // Desactivar collider
         boxCollider.enabled = false;
 
@@ -338,6 +354,17 @@ public class ToothCard : MonoBehaviour
         });
     }
 
+    // Cancela la animación de retorno a la posición inicial si está en curso
+    public void CancelReturnAnimation()
+    {
+        if (returnTween != null && returnTween.IsActive())
+        {
+            returnTween.Kill();
+            returnTween = null;
+        }
+
+        isAnimatingButton = false;
+    }
 
     // Función que actualiza el sprite visual del diente en base al estado actual
     private void UpdateToothSprite()

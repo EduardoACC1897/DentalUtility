@@ -30,9 +30,18 @@ public class CareDeck : MonoBehaviour
             Vector3 startPos = transform.position;
             GameObject instance = Instantiate(cardEntry.prefab, startPos, Quaternion.identity);
 
+            // Desactivar collider antes de la animación
+            BoxCollider2D collider = instance.GetComponent<BoxCollider2D>();
+            if (collider != null) collider.enabled = false;
+
             // Animar hacia la posición de destino
             float duration = 0.3f;
-            instance.transform.DOMove(pos.position, duration).SetEase(Ease.OutQuad);
+            instance.transform.DOMove(pos.position, duration)
+                .SetEase(Ease.OutQuad)
+                .OnComplete(() =>
+                {
+                    if (collider != null) collider.enabled = true;
+                });
 
             posIndex++;
             if (posIndex >= positions.Length) break;

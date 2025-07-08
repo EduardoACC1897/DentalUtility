@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Premolar4
   m_EditorClassIdentifier: 
   cardID: Premolar_4
-  dirtValue: 0
-  toothPH: 100
-  state: 0
+  dirtValue: 100
+  toothPH: 0
+  state: 1
   durability: 0
-  hasFracture: 0
   isDirty: 0
+  hasFracture: 1

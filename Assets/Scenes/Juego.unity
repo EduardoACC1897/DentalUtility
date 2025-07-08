@@ -2281,18 +2281,20 @@ MonoBehaviour:
   toothDeck: {fileID: 1851796854}
   foodDeck: {fileID: 38046267}
   careDeck: {fileID: 1178493197}
+  discardPile: {fileID: 1505898267}
   totalToothCards: 0
   totalToothCardsCreated: 0
   usedToothCount: 0
   foodPhaseTimer: 180
   carePhaseDuration: 15
   carePhaseTimer: 0
-  maxFoodRounds: 3
+  maxFoodRounds: 2
   currentFoodRounds: 0
   score: 0
   timerText: {fileID: 485555718}
   roundsText: {fileID: 871329443}
   scoreText: {fileID: 2079166211}
+  rerollButton: {fileID: 1648106732}
   bgSpriteFood: {fileID: 21300000, guid: 138effd8f0287bd46ad44b0b01c26aa7, type: 3}
   bgSpriteCare: {fileID: 21300000, guid: 8a75f9345aa66c24fbfa14e79ce103f1, type: 3}
   bgRenderer: {fileID: 729833944}
@@ -2300,7 +2302,12 @@ MonoBehaviour:
   finalScoreText: {fileID: 2120293895}
   isGameOver: 0
   isTransitioning: 0
+  hasTriggeredCarePhaseEnd: 0
   canUseCards: 1
+  transitionToFoodPhaseSprite: {fileID: 21300000, guid: c8e05774d4d646940a4556c2f561b37e, type: 3}
+  transitionToCarePhaseSprite: {fileID: 21300000, guid: f1581eb66d0cece4e946dbb492d0940c, type: 3}
+  cariesTransitionSprite: {fileID: 21300000, guid: 2ef1adf7cb0867d4ebf5ec80dacdd82c, type: 3}
+  discardTransitionSprite: {fileID: 21300000, guid: 739ae5646458b334480a33226f7804a6, type: 3}
 --- !u!4 &2087884140
 Transform:
   m_ObjectHideFlags: 0

@@ -23,9 +23,18 @@ public class FoodDeck : MonoBehaviour
             Vector3 startPos = transform.position;
             GameObject instance = Instantiate(prefab, startPos, Quaternion.identity);
 
+            // Desactivar collider antes de la animación
+            BoxCollider2D collider = instance.GetComponent<BoxCollider2D>();
+            if (collider != null) collider.enabled = false;
+
             // Animar hacia su posición destino
             float duration = 0.3f;
-            instance.transform.DOMove(positions[i].position, duration).SetEase(Ease.OutQuad);
+            instance.transform.DOMove(positions[i].position, duration)
+                .SetEase(Ease.OutQuad)
+                .OnComplete(() =>
+                {
+                    if (collider != null) collider.enabled = true;
+                });
         }
     }
 }

@@ -7,9 +7,10 @@ public class GameController : MonoBehaviour
 {
     public int phase = 1; // Fases: Comida = 1, Cuidado = 2
 
-    public ToothDeck toothDeck; // Mazo de dientes
-    public FoodDeck foodDeck;   // Mazo de comida
-    public CareDeck careDeck;   // Mazo de cuidado dental
+    public ToothDeck toothDeck;    // Mazo de dientes
+    public FoodDeck foodDeck;      // Mazo de comida
+    public CareDeck careDeck;      // Mazo de cuidado dental
+    public GameObject discardPile; // Pila de descarte
 
     // Contadores
     public int totalToothCards = 0;
@@ -41,6 +42,9 @@ public class GameController : MonoBehaviour
     public TMP_Text roundsText;
     public TMP_Text scoreText;
 
+    // Botón
+    public GameObject rerollButton;
+
     // Sprites de fondo y posición del renderer
     public Sprite bgSpriteFood, bgSpriteCare;
     public SpriteRenderer bgRenderer;
@@ -51,8 +55,14 @@ public class GameController : MonoBehaviour
     public bool isGameOver = false; // Bandera para controlar el estado del juego
 
     public bool isTransitioning = false; // Indica si se está realizando una transición entre fases
+    public bool hasTriggeredCarePhaseEnd = false; // Asegura que se llame solo una vez transición para cuando termina fase de cuidado
     public bool canUseCards = true; // Controla si el jugador puede interactuar con las cartas
 
+    // Sprites de transición
+    public Sprite transitionToFoodPhaseSprite;   // Transición visual para fase de comida
+    public Sprite transitionToCarePhaseSprite;   // Transición visual para fase de cuidado
+    public Sprite discardTransitionSprite;       // Transición visual al descartar cartas
+    public Sprite cariesTransitionSprite;        // Transición visual cuando aparecen caries
 
     void Start()
     {
@@ -72,10 +82,12 @@ public class GameController : MonoBehaviour
         else if (phase == 2)
         {
             carePhaseTimer -= Time.deltaTime;
+            carePhaseTimer = Mathf.Max(0f, carePhaseTimer);
 
-            if (carePhaseTimer <= 0f)
+            // Solo ejecutar la transición una vez
+            if (carePhaseTimer <= 0f && !hasTriggeredCarePhaseEnd)
             {
-                carePhaseTimer = 0f;
+                hasTriggeredCarePhaseEnd = true;
                 StartCoroutine(TransitionToNextPhase());
             }
         }
@@ -96,6 +108,89 @@ public class GameController : MonoBehaviour
 
         canUseCards = true; // Volver a permitir uso de cartas
         isTransitioning = false;
+    }
+
+    // Corrutina que realiza la transición visual entre fases del juego.
+    // Elimina las cartas activas según la fase actual, cambia el sprite de fondo a uno de transición,
+    // desactiva temporalmente todos los mazos, paneles y textos UI, espera 5 segundos,
+    // y luego activa la nueva fase correspondiente con todos los elementos visibles nuevamente.
+    private System.Collections.IEnumerator PhaseTransitionCoroutine()
+    {
+        isTransitioning = true;
+        canUseCards = false;
+
+        // Eliminar cartas según la fase actual
+        if (phase == 1) // Fase de comida
+        {
+            FoodCard[] foodCards = Object.FindObjectsByType<FoodCard>(FindObjectsSortMode.None);
+            foreach (FoodCard card in foodCards)
+                Destroy(card.gameObject);
+        }
+        else if (phase == 2) // Fase de cuidado
+        {
+            CareCard[] careCards = Object.FindObjectsByType<CareCard>(FindObjectsSortMode.None);
+            foreach (CareCard card in careCards)
+                Destroy(card.gameObject);
+        }
+
+        // Siempre eliminar cartas de diente
+        ToothCard[] toothCards = Object.FindObjectsByType<ToothCard>(FindObjectsSortMode.None);
+        foreach (ToothCard card in toothCards)
+            Destroy(card.gameObject);
+
+        // Ocultar objetos durante la transición
+        if (toothDeck != null) toothDeck.gameObject.SetActive(false);
+        if (foodDeck != null) foodDeck.gameObject.SetActive(false);
+        if (careDeck != null) careDeck.gameObject.SetActive(false);
+        if (discardPile != null) discardPile.SetActive(false);
+        if (timerText != null) timerText.gameObject.SetActive(false);
+        if (roundsText != null) roundsText.gameObject.SetActive(false);
+        if (scoreText != null) scoreText.gameObject.SetActive(false);
+        if (rerollButton != null) rerollButton.SetActive(false);
+
+        // Evaluar riesgos
+        if (phase == 2)
+        {
+            yield return StartCoroutine(toothDeck.EvaluateDiscardRiskWithTransition(this));
+            yield return StartCoroutine(toothDeck.EvaluateCariesRiskWithTransition(this));
+        }
+
+        // Cambiar sprite de transición
+        if (phase == 1)
+            bgRenderer.sprite = transitionToCarePhaseSprite;
+        else if (phase == 2)
+            bgRenderer.sprite = transitionToFoodPhaseSprite;
+
+        yield return new WaitForSeconds(5f); // Tiempo de transición
+
+        // Avanzar de fase
+        if (phase == 1)
+        {
+            phase = 2;
+            CarePhase();
+            // Ocultar rondas durante la fase de cuidado (2)
+            roundsText.gameObject.SetActive(false);
+        }
+        else if (phase == 2)
+        {
+            phase = 1;
+            FoodPhase();
+            // Mostrar rondas durante la fase de cuidado (1)
+            roundsText.gameObject.SetActive(true);
+        }
+
+        // Restaurar UI y objetos
+        if (toothDeck != null) toothDeck.gameObject.SetActive(true);
+        if (foodDeck != null) foodDeck.gameObject.SetActive(true);
+        if (careDeck != null) careDeck.gameObject.SetActive(true);
+        if (discardPile != null) discardPile.SetActive(true);
+        if (timerText != null) timerText.gameObject.SetActive(true);
+        if (scoreText != null) scoreText.gameObject.SetActive(true);
+        if (rerollButton != null) rerollButton.SetActive(true);
+
+        canUseCards = true;
+        isTransitioning = false;
+        hasTriggeredCarePhaseEnd = false;
     }
 
     // Se muestra el panel de game over con el puntaje final
@@ -132,10 +227,14 @@ public class GameController : MonoBehaviour
         if (phase == 1)
         {
             FoodPhase();
+            // Mostrar las rondas solo en la fase de comida (1)
+            roundsText.gameObject.SetActive(true);
         }
         else if (phase == 2)
         {
             CarePhase();
+            // Ocultar las rondas solo en la fase de comida (2)
+            roundsText.gameObject.SetActive(false);
         }
         else
         {
@@ -148,19 +247,6 @@ public class GameController : MonoBehaviour
     {
         // Reiniciar el temporizador para la fase de cuidado
         carePhaseTimer = carePhaseDuration;
-
-        // Eliminar cartas de cuidado y diente activas
-        CareCard[] careCards = Object.FindObjectsByType<CareCard>(FindObjectsSortMode.None);
-        foreach (CareCard card in careCards)
-        {
-            Destroy(card.gameObject);
-        }
-
-        ToothCard[] toothCards = Object.FindObjectsByType<ToothCard>(FindObjectsSortMode.None);
-        foreach (ToothCard card in toothCards)
-        {
-            Destroy(card.gameObject);
-        }
 
         // Reinicio de contadores
         totalToothCards = 0;
@@ -185,21 +271,9 @@ public class GameController : MonoBehaviour
     // Función para iniciar la fase 2 (fase de cuidado dental)
     private void CarePhase()
     {
+
         // Reiniciar rondas de comida
         currentFoodRounds = 0;
-
-        // Eliminar cartas de comida y diente activas
-        FoodCard[] foodCards = Object.FindObjectsByType<FoodCard>(FindObjectsSortMode.None);
-        foreach (FoodCard card in foodCards)
-        {
-            Destroy(card.gameObject);
-        }
-
-        ToothCard[] toothCards = Object.FindObjectsByType<ToothCard>(FindObjectsSortMode.None);
-        foreach (ToothCard card in toothCards)
-        {
-            Destroy(card.gameObject);
-        }
 
         // Reinicio de contadores
         totalToothCards = 0;
@@ -229,24 +303,7 @@ public class GameController : MonoBehaviour
     // Cambia entre la fase de comida y la de cuidado dental
     public void ChangePhase()
     {
-        if (phase == 1)
-        {
-            phase = 2;
-
-            // Cambiar a la fase de cuidado dental
-            CarePhase();
-        }
-        else if (phase == 2)
-        {
-            phase = 1;
-
-            // Evaluar el riesgo de descartar dientes dañados y aparición de caries 
-            toothDeck.EvaluateDiscardRiskForAllCards();
-            toothDeck.EvaluateCariesRiskForAllCards();
-
-            // Cambiar a la fase de comida
-            FoodPhase();
-        }
+        StartCoroutine(PhaseTransitionCoroutine());
     }
 
     // Función para actualizar el contador de cartas de diente disponibles
@@ -255,12 +312,6 @@ public class GameController : MonoBehaviour
         if (toothDeck != null)
         {
             totalToothCards = toothDeck.GetAvailableToothCardsCount();
-
-            // Si estamos en la fase de cuidado, sumar 1 extra
-            if (phase == 2)
-            {
-                totalToothCards += 1;
-            }
         }
     }
 
@@ -274,7 +325,7 @@ public class GameController : MonoBehaviour
         {
             if (phase == 2)
             {
-                ChangePhase(); // Cambiar a fase 1
+                StartCoroutine(TransitionToNextPhase());
             }
             else if (phase == 1 && toothDeck != null)
             {
@@ -357,12 +408,10 @@ public class GameController : MonoBehaviour
         {
             timerText.text = "Tiempo: " + ((int)foodPhaseTimer) + "s";
             roundsText.text = $"Ronda: {currentFoodRounds + 1}/{maxFoodRounds}";
-            roundsText.gameObject.SetActive(true); // Mostrar las rondas solo en la fase de comida (1)
         }
         else if (phase == 2)
         {
             timerText.text = "Tiempo: " + ((int)carePhaseTimer) + "s";
-            roundsText.gameObject.SetActive(false); // Ocultar rondas durante la fase de cuidado (2)
         }
 
         // Puntaje
