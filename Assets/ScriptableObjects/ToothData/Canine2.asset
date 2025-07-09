@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Canine2
   m_EditorClassIdentifier: 
   cardID: Canine_2
-  dirtValue: 100
-  toothPH: 0
-  state: 1
+  dirtValue: 0
+  toothPH: 100
+  state: 0
   durability: 0
   isDirty: 0
-  hasFracture: 1
+  hasFracture: 0

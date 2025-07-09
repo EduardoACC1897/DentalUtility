@@ -1,7 +1,9 @@
-using UnityEngine;
-using TMPro;
+using DG.Tweening;
 using NUnit.Framework;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -416,5 +418,21 @@ public class GameController : MonoBehaviour
 
         // Puntaje
         scoreText.text = "Puntaje: " + score.ToString();
+    }
+
+    // Vuelve a la escena llamada "Inicio"
+    public void ReturnToStartScene()
+    {
+        DOTween.KillAll();
+        Time.timeScale = 1f; // Asegurar que el tiempo esté normal
+        SceneManager.LoadScene("Inicio");
+    }
+
+    // Reinicia la escena actual del juego
+    public void RestartScene()
+    {
+        DOTween.KillAll();
+        Time.timeScale = 1f; // Asegurar que el tiempo esté normal
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
