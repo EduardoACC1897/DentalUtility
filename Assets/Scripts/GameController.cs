@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
@@ -66,6 +67,10 @@ public class GameController : MonoBehaviour
     public Sprite discardTransitionSprite;       // Transición visual al descartar cartas
     public Sprite cariesTransitionSprite;        // Transición visual cuando aparecen caries
 
+    public AudioSource Bgm;
+    public AudioResource bgmfood, bgmcare, foodTransition, careTransition, cariesTransition, discardTransition, bgmScore;
+    public AudioClip endphaseClip, takeCard, shuffleBtn, cardShuffle, foodCardConsumed, careCardConsumed, cardShaking, discardSound, fractureSound, dropCard, correctUse, incorrectUse;
+
     void Start()
     {
         Phase();
@@ -96,11 +101,108 @@ public class GameController : MonoBehaviour
 
         UpdateUI();
     }
+    private void playFoodMusic()
+    {
+        Bgm.loop = true;
+        Bgm.resource = bgmfood;
+        Bgm.Play();
+    }
+    private void playCareMusic()
+    {
+        Bgm.loop = true;
+        Bgm.resource = bgmcare;
+        Bgm.Play();
+    }
+    private void playEndPhaseSound()
+    {
+        Bgm.loop = false;
+        Bgm.PlayOneShot(endphaseClip);
+    }
+    private void playFoodTransitionSound()
+    {
+        Bgm.loop = false;
+        Bgm.resource = foodTransition;
+        Bgm.Play();
+    }
+    private void playCareTransitionSound()
+    {
+        Bgm.loop = false;
+        Bgm.resource = careTransition;
+        Bgm.Play();
+    }
+    public void playCariesTransitionSound()
+    {
+        Bgm.loop = false;
+        Bgm.resource = cariesTransition;
+        Bgm.Play();
+    }
+    public void playDiscardTransitionSound()
+    {
+        Bgm.loop = false;
+        Bgm.resource = discardTransition;
+        Bgm.Play();
+    }
+    public void playTakeCardSound()    
+    {
+        Bgm.loop = false;
+        Bgm.PlayOneShot(takeCard);
+    }
+    public void playShuffleBtnSound()
+    {
+        Bgm.loop = false;
+        Bgm.PlayOneShot(shuffleBtn);
+    }
+    public void playCardShuffleSound()
+    {
+        Bgm.loop = false;
+        Bgm.PlayOneShot(cardShuffle);
+    }
+    public void playFoodCardConsumedSound()
+    {
+        Bgm.loop = false;
+        Bgm.PlayOneShot(foodCardConsumed);
+    }
+    public void playCareCardConsumedSound()
+    {
+        Bgm.loop = false;
+        Bgm.PlayOneShot(careCardConsumed);
+    }
+    public void playShakingSound()
+    {
+        Bgm.loop = false;
+        Bgm.PlayOneShot(cardShaking);
+    }
+    public void playDiscardSound()
+    {
+        Bgm.loop = false;
+        Bgm.PlayOneShot(discardSound);
+    }
+    public void playFractureSound()
+    {
+        Bgm.loop = false;
+        Bgm.PlayOneShot(fractureSound);
+    }
+    public void playDropCardSound()
+    {
+        Bgm.loop = false;
+        Bgm.PlayOneShot(dropCard);
+    }
+    public void playCorrectSound()
+    {
+        Bgm.loop = false;
+        Bgm.PlayOneShot(correctUse);
+    }
+    public void playIncorrectSound()
+    {
+        Bgm.loop = false;
+        Bgm.PlayOneShot(incorrectUse);
+    }
 
     // Corrutina que realiza una pausa de 3 segundos antes de cambiar de fase.
     // Durante la pausa se bloquea el uso de cartas y se indica que está en transición.
     private System.Collections.IEnumerator TransitionToNextPhase()
     {
+        playEndPhaseSound();
         isTransitioning = true;
         canUseCards = false; // Bloquear uso de cartas
 
@@ -159,9 +261,15 @@ public class GameController : MonoBehaviour
 
         // Cambiar sprite de transición
         if (phase == 1)
+        {
             bgRenderer.sprite = transitionToCarePhaseSprite;
+            playCareTransitionSound();
+        }
         else if (phase == 2)
+        {
             bgRenderer.sprite = transitionToFoodPhaseSprite;
+            playFoodTransitionSound();
+        }
 
         yield return new WaitForSeconds(5f); // Tiempo de transición
 
@@ -198,6 +306,9 @@ public class GameController : MonoBehaviour
     // Se muestra el panel de game over con el puntaje final
     private void ShowGameOverScreen()
     {
+        Bgm.loop = true;
+        Bgm.resource = bgmScore;
+        Bgm.Play();
         canUseCards = false;
         Time.timeScale = 0f;
 
@@ -247,6 +358,7 @@ public class GameController : MonoBehaviour
     // Función para iniciar la fase 1 (fase de comida)
     private void FoodPhase()
     {
+        playFoodMusic();
         // Reiniciar el temporizador para la fase de cuidado
         carePhaseTimer = carePhaseDuration;
 
@@ -273,7 +385,7 @@ public class GameController : MonoBehaviour
     // Función para iniciar la fase 2 (fase de cuidado dental)
     private void CarePhase()
     {
-
+        playCareMusic();
         // Reiniciar rondas de comida
         currentFoodRounds = 0;
 

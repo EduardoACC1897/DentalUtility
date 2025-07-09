@@ -130,6 +130,7 @@ public class ToothDeck : MonoBehaviour
     // Función que reemplaza todas las cartas de diente activas por nuevas del mazo
     public void ReplaceAllToothCards()
     {
+        GameController gc = Object.FindFirstObjectByType<GameController>();
         ToothCard[] existingCards = Object.FindObjectsByType<ToothCard>(FindObjectsSortMode.None);
         if (existingCards.Length == 0)
         {
@@ -140,6 +141,7 @@ public class ToothDeck : MonoBehaviour
         int availableCount = toothCards.FindAll(c => c.isAvailable).Count;
         if (availableCount == 0)
         {
+            gc.playIncorrectSound();
             Debug.Log("No hay cartas disponibles en el mazo para generar nuevas cartas.");
             return;
         }
@@ -148,6 +150,8 @@ public class ToothDeck : MonoBehaviour
         foreach (ToothCard card in existingCards)
         {
             if (card.isAnimating) continue; // Ignorar cartas en animación
+
+            DOTween.Kill(card.transform);
 
             if (card.isAnimatingButton)
             {
@@ -159,8 +163,7 @@ public class ToothDeck : MonoBehaviour
         }
 
         SpawnToothCards();
-
-        GameController gc = Object.FindFirstObjectByType<GameController>();
+        gc.playShuffleBtnSound();
 
         foreach (ToothCardEntry entry in toothCards)
         {
@@ -249,6 +252,8 @@ public class ToothDeck : MonoBehaviour
         if (discardedCardsVisuals.Count > 0)
         {
             gameController.bgRenderer.sprite = gameController.discardTransitionSprite;
+            gameController.playDiscardTransitionSound();
+            gameController.playShakingSound();
 
             // Animación para cada carta visual
             foreach (var card in discardedCardsVisuals)
@@ -258,6 +263,7 @@ public class ToothDeck : MonoBehaviour
                 seq.Append(card.transform.DOScale(Vector3.zero, 2f).SetEase(Ease.InBack));
                 seq.OnComplete(() => GameObject.Destroy(card));
             }
+            gameController.playDiscardSound();
 
             yield return new WaitForSeconds(5f);
         }
@@ -306,6 +312,7 @@ public class ToothDeck : MonoBehaviour
         if (affectedCards.Count > 0)
         {
             gameController.bgRenderer.sprite = gameController.cariesTransitionSprite;
+            gameController.playCariesTransitionSound();
 
             int batchSize = 5;
             int totalBatches = Mathf.CeilToInt(affectedCards.Count / (float)batchSize);
@@ -345,11 +352,11 @@ public class ToothDeck : MonoBehaviour
                         visuals.Add(visual);
                     }
                 }
-
+                gameController.playShakingSound();
                 foreach (var card in visuals)
                 {
                     Sequence seq = DOTween.Sequence();
-                    seq.Append(card.transform.DOShakePosition(3f, 0.1f, 10, 90, false, true));
+                    seq.Append(card.transform.DOShakePosition(2f, 0.1f, 10, 90, false, true));
                     seq.OnComplete(() => GameObject.Destroy(card));
                 }
 

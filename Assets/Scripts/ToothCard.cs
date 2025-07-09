@@ -117,6 +117,7 @@ public class ToothCard : MonoBehaviour
         // Si no hay ninguna carta siendo utilizada, se permite el arrastre
         if (!cardInUse)
         {
+            gc.playTakeCardSound();
             isDragging = true;
             cardInUse = true;
             boxCollider.enabled = false;
@@ -135,6 +136,8 @@ public class ToothCard : MonoBehaviour
         bool usedOnFood = false;
         bool usedOnCare = false;
 
+        GameController gc = Object.FindFirstObjectByType<GameController>();
+
         Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0f);
 
         foreach (var hit in hits)
@@ -147,8 +150,11 @@ public class ToothCard : MonoBehaviour
                 FoodCard food = hit.GetComponent<FoodCard>();
                 if (food != null)
                 {
+                    int counter = 3;
                     if (grindAction && food.grindAction)
                     {
+                        counter--;
+                        gc.playCorrectSound();
                         food.grindAction = false;
                         Transform grindObj = food.transform.Find("Grind");
                         if (grindObj != null)
@@ -160,9 +166,10 @@ public class ToothCard : MonoBehaviour
                             }
                         }
                     }
-
                     if (cutAction && food.cutAction)
                     {
+                        counter--;
+                        gc.playCorrectSound();
                         food.cutAction = false;
                         Transform cutObj = food.transform.Find("Cut");
                         if (cutObj != null)
@@ -174,9 +181,10 @@ public class ToothCard : MonoBehaviour
                             }
                         }
                     }
-
                     if (tearAction && food.tearAction)
                     {
+                        counter--;
+                        gc.playCorrectSound();
                         food.tearAction = false;
                         Transform tearObj = food.transform.Find("Tear");
                         if (tearObj != null)
@@ -196,6 +204,11 @@ public class ToothCard : MonoBehaviour
 
                         // Calcular y agregar puntos al puntaje global según el estado y condición del diente
                         AwardScore();
+                    }
+
+                    if (counter == 3)
+                    {
+                        gc.playIncorrectSound();
                     }
 
                     usedSuccessfully = true;
@@ -284,8 +297,6 @@ public class ToothCard : MonoBehaviour
                 }
             }
 
-            // Registro en el GameController
-            GameController gc = Object.FindFirstObjectByType<GameController>();
             if (gc != null)
             {
                 gc.RegisterToothCardUsed();
@@ -318,12 +329,14 @@ public class ToothCard : MonoBehaviour
                         returnTween = null;
                     }
                 });
+            gc.playDropCardSound();
         }
     }
 
     // Función de animación de uso de carta de diente
     public void PlayUseAnimation()
     {
+        GameController gc = Object.FindFirstObjectByType<GameController>();
         // Marcar como animando
         isAnimating = true;
 
@@ -346,6 +359,8 @@ public class ToothCard : MonoBehaviour
         // Caída con rotación y escala
         seq.Join(transform.DORotate(new Vector3(0f, 0f, 180f), fallDuration, RotateMode.FastBeyond360));
         seq.Join(transform.DOScale(Vector3.zero, fallDuration).SetEase(Ease.InQuad));
+
+        gc.playDiscardSound();
 
         // Destruir al finalizar
         seq.OnComplete(() =>
@@ -442,6 +457,7 @@ public class ToothCard : MonoBehaviour
     // Función que evalúa la probabilidad de que el diente sufra una fractura y actualiza el estado si ocurre
     private void EvaluateFractureRisk()
     {
+        GameController gc = Object.FindFirstObjectByType<GameController>();
         int probability = 0;
 
         // Asignar probabilidad según la durabilidad
@@ -453,6 +469,10 @@ public class ToothCard : MonoBehaviour
         // Determinar si ocurre fractura
         int roll = Random.Range(0, 100);
         hasFracture = roll < probability;
+        if (hasFracture)
+        {
+            gc.playFractureSound();
+        }
     }
 
     // Función para calcular y otorgar puntaje al GameController según el estado y condición del diente

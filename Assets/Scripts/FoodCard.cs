@@ -19,6 +19,7 @@ public class FoodCard : MonoBehaviour
     // Función para animar la destrucción de la carta
     public void PlayDestroyAnimation()
     {
+        GameController gc = Object.FindFirstObjectByType<GameController>();
         // Desactivar el collider para evitar interacción durante la animación
         boxCollider.enabled = false;
 
@@ -29,5 +30,6 @@ public class FoodCard : MonoBehaviour
             {
                 Destroy(gameObject);
             });
+        gc.playFoodCardConsumedSound();
     }
 }
